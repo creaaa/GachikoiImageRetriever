@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
         // OAuth認証用設定
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-        configurationBuilder.setOAuthConsumerKey("Y1TwOLvjn3s4Sm6MaQjD7HHrY");
-        configurationBuilder.setOAuthConsumerSecret("ieAyAYIGEnYqWYFC1h0Bn5IoAmKH9CWIG6VbpzNyJkN1HmiAJb");
-        configurationBuilder.setOAuthAccessToken("919370054-ZWeLQfBo1fjvhMB5GeqZ3GFOdbVQ0D4oeFGHMXAq");
-        configurationBuilder.setOAuthAccessTokenSecret("zfyCNjqoK5RPCrfy41T63hW82eitk9rh7pFswkO9g1Bq0");
+        configurationBuilder.setOAuthConsumerKey(getString(R.string.twitter_consumer_key));
+        configurationBuilder.setOAuthConsumerSecret(getString(R.string.twitter_consumer_secret));
+        configurationBuilder.setOAuthAccessToken(getString(R.string.twitter_access_token));
+        configurationBuilder.setOAuthAccessTokenSecret(getString(R.string.twitter_access_token_secret));
 
         // Twitterオブジェクトの初期化
         this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
