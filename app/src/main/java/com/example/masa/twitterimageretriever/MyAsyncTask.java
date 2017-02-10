@@ -3,10 +3,13 @@ package com.example.masa.twitterimageretriever;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import twitter4j.MediaEntity;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -40,10 +43,24 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
     protected void onPostExecute(List<twitter4j.Status> s) {
         System.out.println("async おわったよ");
 
-        System.out.println(s);
-
         // これはできる。もちろん先頭の1個だけだが...
         // Picasso.with(activity).load("http://i.imgur.com/DvpvklR.png").into(imageView);
+
+
+
+        ArrayAdapter<String> imageURLs;
+        ArrayList<String> me = new ArrayList<String>();
+
+        for (twitter4j.Status tweet: s) {
+            //ツイート本文に画像URLが含まれていたら取り出す
+            MediaEntity[] mentitys = tweet.getMediaEntities();
+            for(MediaEntity m: mentitys){
+                me.add(m.getMediaURL());
+            }
+        }
+
+        System.out.println("さて、どんだけとれてるかな？");
+        System.out.println(me);
 
         String[] asyncURIAry = {
                 "http://i.imgur.com/DvpvklR.png",
@@ -54,7 +71,9 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
         };
 
 
-        activity.rerenderGridView(asyncURIAry);
+//        activity.rerenderGridView(asyncURIAry);
+        activity.rerenderGridView(me);
+
     }
 
     @Override
@@ -76,8 +95,6 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
     protected List<twitter4j.Status> doInBackground(Void... params) {
 
         System.out.println("Do!! Do!! Do!!");
-//        twitter = null;
-        System.out.println("おら！" + this.twitter);
 
         // 非同期通信
 //        try {
@@ -99,14 +116,16 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 //            e.printStackTrace();
 //        }
 
+
+        //////////////// できます ///////////////////
         // 検索の実行
         QueryResult result = null;
 
         try {
             // 検索文字列を設定する
-            Query query = new Query("lady gaga");
-            query.setLocale("ja");	// 日本語のtweetに限定する
-            query.setCount(20);		// 最大20tweetにする（デフォルトは15）
+            Query query = new Query("nintendo switch");
+//            query.setLocale("ja");	// 日本語のtweetに限定する
+            query.setCount(500000);		// 最大20tweetにする（デフォルトは15）
 
             result = this.twitter.search(query);
 
@@ -115,5 +134,7 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
         }
 
         return result.getTweets();
+
+        //////////////// できます ///////////////////
     }
 }

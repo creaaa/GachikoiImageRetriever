@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     Twitter tw;
 
+    ArrayList<String> oreoreImageURLs = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,22 +79,17 @@ public class MainActivity extends AppCompatActivity {
 
         // Twitterオブジェクトの初期化
         this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
+        //
 
-        Log.i("u", String.valueOf("twitter: " + this.tw));
-
+        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
     }
 
 
-    String[] oreoreImageURLs = {
-            "http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg",
-            "http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg",
-            "http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg",
-            "http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg",
-            "http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg"
-    };
-
-
-    void rerenderGridView(String[] imageURLs) {
+    void rerenderGridView(ArrayList<String> imageURLs) {
 
         oreoreImageURLs = imageURLs;
 
@@ -253,9 +250,7 @@ public class MainActivity extends AppCompatActivity {
 //                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg"
 //            };
 
-            Picasso.with(getApplicationContext()).load(oreoreImageURLs[position]).into(holder.imageView);
-
-
+            Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).into(holder.imageView);
 
 
             // とおる。全部満たしてる。
@@ -273,7 +268,8 @@ public class MainActivity extends AppCompatActivity {
             // 全要素数を返す
 
             // return iconList.size();
-            return 5;
+            // return 5;
+            return oreoreImageURLs.size();
         }
 
         @Override
