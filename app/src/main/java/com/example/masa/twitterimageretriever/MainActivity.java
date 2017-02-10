@@ -1,6 +1,7 @@
 
 package com.example.masa.twitterimageretriever;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -8,14 +9,17 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
@@ -68,7 +72,14 @@ public class MainActivity extends AppCompatActivity {
 
         // gridViewにadapterをセット
         gridview.setAdapter(adapter);
+        gridview.setOnItemClickListener(adapter);
         //
+        gridview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        gridview.setMultiChoiceModeListener(new Callback());
+
+
+
+
 
         // OAuth認証用設定
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -193,11 +204,38 @@ public class MainActivity extends AppCompatActivity {
 
 
     // BaseAdapter を継承した GridAdapter クラスのインスタンス生成
-    class GridAdapter extends BaseAdapter {
+    class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
 
         private LayoutInflater inflater;
         private int layoutId;
         private List<Integer> icList = new ArrayList<Integer>();
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
+
+            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    System.out.println("ながい");
+                    return true;
+                }
+            });
+
+            Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).resize(1250,1250).centerCrop().into(imageView);
+
+//             Integer imageResource = R.drawable.fever;
+            //Integer imageResource = (Integer) getItem(position);
+
+            //imageView.setImageResource(imageResource);
+
+            Dialog dialog = new Dialog(MainActivity.this);
+            dialog.setContentView(imageView);
+            dialog.show();
+        }
 
 
         public GridAdapter(Context context, int layoutId, List<Integer> iconList) {
@@ -275,11 +313,77 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Object getItem(int position) {
             return null;
+            //return icList.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
+    }
+
+
+
+    private class Callback implements GridView.MultiChoiceModeListener {
+
+        // これだけいつ呼ばれるか不明
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            // アクションアイテム選択時
+            System.out.println("きた1");
+            return true;
+        }
+
+
+        // 以下、時系列順
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // アクションモード初期化処理
+            System.out.println("きた2");
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // アクションモード表示事前処理
+            System.out.println("きた4");
+
+            return true;
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position,
+                                              long id, boolean checked) {
+            // アクションモード時のアイテムの選択状態変更時
+            System.out.println("きた5");
+        }
+
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+
+            System.out.println("きた3");
+
+            // 決定ボタン押下時
+//            final int checkedCount = get().getCheckedItemCount();
+//            SparseBooleanArray list = getListView().getCheckedItemPositions();
+//            String str = "";
+//
+//            for(int i=0;i<GENRES.length;i++){
+//                boolean checked = list.get(i);
+//                if (checked == true){
+//                    str = str+GENRES[i] + " ";
+//                }
+//            }
+//
+//            Intent intent = new Intent(getApplicationContext(), ResultDisp.class);
+//            intent.putExtra("checked_list", str);
+//            startActivity(intent);
+        }
+
+
+
+
     }
 }
