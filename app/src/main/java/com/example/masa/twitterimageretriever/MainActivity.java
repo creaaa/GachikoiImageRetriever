@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         // gridViewにadapterをセット
         gridview.setAdapter(adapter);
+        //
+
     }
 
 
