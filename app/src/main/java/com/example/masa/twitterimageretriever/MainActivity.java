@@ -7,6 +7,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -35,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
     private List<Integer> iconList = new ArrayList<Integer>();
 
+    Twitter tw;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
+        Log.i("u", "ogehoge");
+
 
         il = new IconList();
         for (int i = 0; i < il.maxNum() ; i++){
@@ -59,9 +68,19 @@ public class MainActivity extends AppCompatActivity {
         gridview.setAdapter(adapter);
         //
 
+        // OAuth認証用設定
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+        configurationBuilder.setOAuthConsumerKey("Y1TwOLvjn3s4Sm6MaQjD7HHrY");
+        configurationBuilder.setOAuthConsumerSecret("ieAyAYIGEnYqWYFC1h0Bn5IoAmKH9CWIG6VbpzNyJkN1HmiAJb");
+        configurationBuilder.setOAuthAccessToken("919370054-ZWeLQfBo1fjvhMB5GeqZ3GFOdbVQ0D4oeFGHMXAq");
+        configurationBuilder.setOAuthAccessTokenSecret("zfyCNjqoK5RPCrfy41T63hW82eitk9rh7pFswkO9g1Bq0");
+
+        // Twitterオブジェクトの初期化
+        this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
+
+        Log.i("u", String.valueOf("twitter: " + this.tw));
+
     }
-
-
 
 
     String[] oreoreImageURLs = {
@@ -123,8 +142,9 @@ public class MainActivity extends AppCompatActivity {
             String APIUri = "https://qiita.com/api/v2/items";
 
             // 非同期通信でURLを取得する
-            MyAsyncTask task = new MyAsyncTask(MainActivity.this);
-            task.execute(APIUri);
+            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
+            //task.execute(APIUri);
+            task.execute();
 
             // false: 続いて↓のonQuery~がコールされる
             // true:  呼び出されない

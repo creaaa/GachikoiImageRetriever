@@ -5,15 +5,29 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-public class MyAsyncTask extends AsyncTask<String, String, String> {
+import java.util.List;
+
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+
+public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
     private MainActivity activity;
     private ImageView imageView;
 
-    public MyAsyncTask(Context context) {
+    private Twitter twitter;
+
+
+    public MyAsyncTask(Context context, Twitter twitter) {
         super();
+        //
         activity = (MainActivity) context;
-        imageView = (ImageView) activity.findViewById(R.id.image_view);
+        //imageView = (ImageView) activity.findViewById(R.id.image_view);
+        //
+        this.twitter = twitter;
     }
 
     @Override
@@ -23,9 +37,10 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
+    protected void onPostExecute(List<twitter4j.Status> s) {
         System.out.println("async おわったよ");
-        //System.out.println(s);
+
+        System.out.println(s);
 
         // これはできる。もちろん先頭の1個だけだが...
         // Picasso.with(activity).load("http://i.imgur.com/DvpvklR.png").into(imageView);
@@ -56,15 +71,16 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 
     }
 
+
     @Override
-    protected String doInBackground(String... params) {
+    protected List<twitter4j.Status> doInBackground(Void... params) {
 
         System.out.println("Do!! Do!! Do!!");
-
-        StringBuilder builder = new StringBuilder();
+//        twitter = null;
+        System.out.println("おら！" + this.twitter);
 
         // 非同期通信
-        try {
+//        try {
 
 //            URL url = new URL(params[0]);
 //
@@ -79,19 +95,25 @@ public class MyAsyncTask extends AsyncTask<String, String, String> {
 //            while ((line = reader.readLine()) != null) {
 //                builder.append(line);
 //            }
-
-
-
-        } catch (Exception e) {
-
-        }
-
 //        catch (IOException e) {
 //            e.printStackTrace();
 //        }
 
-        return  builder.toString();
+        // 検索の実行
+        QueryResult result = null;
 
+        try {
+            // 検索文字列を設定する
+            Query query = new Query("lady gaga");
+            query.setLocale("ja");	// 日本語のtweetに限定する
+            query.setCount(20);		// 最大20tweetにする（デフォルトは15）
 
+            result = this.twitter.search(query);
+
+        } catch (TwitterException e) {
+            e.printStackTrace();
+        }
+
+        return result.getTweets();
     }
 }
