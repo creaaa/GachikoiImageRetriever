@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -81,10 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
         // gridViewにadapterをセット
         gridview.setAdapter(adapter);
+
         gridview.setOnItemClickListener(adapter);
-        //
         gridview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new Callback());
+        gridview.setOnScrollListener(adapter);
 
         // OAuth認証用設定
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -202,11 +204,30 @@ public class MainActivity extends AppCompatActivity {
 
 
     // BaseAdapter を継承した GridAdapter クラスのインスタンス生成
-    class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener {
+    class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
         private LayoutInflater inflater;
         private int layoutId;
-        private List<String> icList = new ArrayList<String>();
+        // private List<String> icList = new ArrayList<String>();
+
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if(firstVisibleItem + visibleItemCount + 1 >= totalItemCount) {
+                //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwjDqaTxgonSAhVhzVQKHQdmD2sQjBwIBA&url=http%3A%2F%2Fwww.titech.ac.jp%2Fnews%2Fimg%2Fn000946_iwata_pic1.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
+                //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwiPpur2gonSAhVmhlQKHfCJAOoQjBwIBA&url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FKmDMc0KZe38%2Fmaxresdefault.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
+                oreoreImageURLs.add("http://blog-img.esuteru.com/image/article/201609/075b245397099c622fc25d6724ffd946.jpg");
+                System.out.println("いま　ふえた");
+                notifyDataSetChanged();  // gridViewだからか？ これがないとだめっぽい
+            } else {
+                System.out.println("きてる　きてる");
+            }
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+        }
 
         @Override
         public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
@@ -263,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
             super();
             this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.layoutId = layoutId;
-            icList = iconList;
+            // icList = iconList;
         }
 
 
