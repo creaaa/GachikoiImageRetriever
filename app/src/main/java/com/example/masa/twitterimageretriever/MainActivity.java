@@ -3,7 +3,13 @@ package com.example.masa.twitterimageretriever;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +29,10 @@ import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import twitter4j.Twitter;
@@ -31,6 +40,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 
+@SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity {
 
     // UI
@@ -40,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     GridAdapter adapter;
 
 
+    @SuppressWarnings("FieldCanBeLocal")
     private IconList il;
     // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
     private List<Integer> iconList = new ArrayList<Integer>();
@@ -77,10 +88,6 @@ public class MainActivity extends AppCompatActivity {
         gridview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         gridview.setMultiChoiceModeListener(new Callback());
 
-
-
-
-
         // OAuth認証用設定
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setOAuthConsumerKey(getString(R.string.twitter_consumer_key));
@@ -91,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         // Twitterオブジェクトの初期化
         this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
         //
-
         oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
         oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
         oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
@@ -172,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean setSearchWord(String searchWord) {
 
         ActionBar actionBar = this.getSupportActionBar();
+        //noinspection ConstantConditions,ConstantConditions
         actionBar.setTitle(searchWord);
         actionBar.setDisplayShowTitleEnabled(true);
 
@@ -211,26 +218,49 @@ public class MainActivity extends AppCompatActivity {
         private List<Integer> icList = new ArrayList<Integer>();
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
 
             LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
+            final ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
+            Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).resize(1250,1250).centerCrop().into(imageView);
 
             imageView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public boolean onLongClick(View v) {
-                    System.out.println("ながい");
+
+                    try {
+                        // sdcardフォルダを指定
+                        File root = Environment.getExternalStorageDirectory();
+
+                        // 日付でファイル名を作成　
+                        Date mDate = new Date();
+                        SimpleDateFormat fileName = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+                        // 保存処理開始
+                        FileOutputStream fos = null;
+                        fos = new FileOutputStream(new File(root, fileName.format(mDate) + ".jpg"));
+
+//                        ImageView sampleImageView = (ImageView)findViewById(R.id.dialog_imageView);
+                        // ただし、グリッドの1個めのが画像が保存されてしまうのだが...
+                        Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
+                        // jpegで保存
+                        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+                        System.out.println("kitaw");
+
+                        // 保存処理終了
+                        fos.close();
+
+                    } catch (Exception e) {
+                        Log.e("Error", "" + e.toString());
+                    }
+
                     return true;
                 }
             });
-
-            Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).resize(1250,1250).centerCrop().into(imageView);
-
-//             Integer imageResource = R.drawable.fever;
-            //Integer imageResource = (Integer) getItem(position);
-
-            //imageView.setImageResource(imageResource);
 
             Dialog dialog = new Dialog(MainActivity.this);
             dialog.setContentView(imageView);
@@ -313,7 +343,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public Object getItem(int position) {
             return null;
-            //return icList.get(position);
         }
 
         @Override
@@ -321,7 +350,6 @@ public class MainActivity extends AppCompatActivity {
             return position;
         }
     }
-
 
 
     private class Callback implements GridView.MultiChoiceModeListener {
@@ -381,9 +409,5 @@ public class MainActivity extends AppCompatActivity {
 //            intent.putExtra("checked_list", str);
 //            startActivity(intent);
         }
-
-
-
-
     }
 }
