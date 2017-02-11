@@ -51,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     @SuppressWarnings("FieldCanBeLocal")
-    private IconList il;
+    //private IconList il;
     // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
-    private List<Integer> iconList = new ArrayList<Integer>();
+    // private List<Integer> iconList = new ArrayList<Integer>();
 
     Twitter tw;
 
@@ -66,20 +66,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
-        Log.i("u", "ogehoge");
 
-
-        il = new IconList();
-        for (int i = 0; i < il.maxNum() ; i++){
-            iconList.add(il.getIcon(i));
-        }
+//        il = new IconList();
+//        for (int i = 0; i < il.maxNum() ; i++){
+//            iconList.add(il.getIcon(i));
+//        }
 
         // GridViewのインスタンスを生成
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         // BaseAdapter を継承したGridAdapterのインスタンスを生成
         // 子要素のレイアウトファイル grid_items.xml を activity_main.xml に inflate するためにGridAdapterに引数として渡す
-        adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, iconList);
+        adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, oreoreImageURLs);
 
         // gridViewにadapterをセット
         gridview.setAdapter(adapter);
@@ -115,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -149,15 +146,12 @@ public class MainActivity extends AppCompatActivity {
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String searchWord) {
+
             // SubmitボタンorEnterKeyを押されたら呼び出されるメソッド
             System.out.println("submit touched");
 
-            String imageURL = null;
-            String APIUri = "https://qiita.com/api/v2/items";
-
             // 非同期通信でURLを取得する
             MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
-            //task.execute(APIUri);
             task.execute();
 
             // false: 続いて↓のonQuery~がコールされる
@@ -194,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
         // Focusを外す
         this.searchView.clearFocus();
 
-
         return false;
     }
 
@@ -205,8 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
     class ViewHolder {
         ImageView imageView;
-
-        Picasso mPicasso;
     }
 
 
@@ -215,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
         private LayoutInflater inflater;
         private int layoutId;
-        private List<Integer> icList = new ArrayList<Integer>();
+        private List<String> icList = new ArrayList<String>();
 
         @Override
         public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
@@ -268,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        public GridAdapter(Context context, int layoutId, List<Integer> iconList) {
+        public GridAdapter(Context context, int layoutId, List<String> iconList) {
             super();
             this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.layoutId = layoutId;
@@ -300,32 +291,7 @@ public class MainActivity extends AppCompatActivity {
             // ※ これは当然動きます
             //holder.imageView.setImageResource(icList.get(position));
 
-
-
-//            String[] imageURLs = {
-//                    "http://i.imgur.com/DvpvklR.png",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//
-//                    // 10個, 11個め。使われない。
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-//                    "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg"
-//            };
-
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).into(holder.imageView);
-
-
-            // とおる。全部満たしてる。
-            //Picasso.with(getApplicationContext()).load("http://i.imgur.com/DvpvklR.png").into(holder.imageView);
-
-//            Picasso.with(getApplicationContext()).load(imageURL).into(holder.imageView);
-//            Picasso.with(getBaseContext()).load(android.R.drawable.ic_media_play).into(holder.imageView);
 
             return convertView;
         }
@@ -334,9 +300,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // 全要素数を返す
-
-            // return iconList.size();
-            // return 5;
             return oreoreImageURLs.size();
         }
 

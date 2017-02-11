@@ -4,7 +4,6 @@ package com.example.masa.twitterimageretriever;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +18,12 @@ import twitter4j.TwitterException;
 public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
     private MainActivity activity;
-    private ImageView imageView;
-
     private Twitter twitter;
 
 
     public MyAsyncTask(Context context, Twitter twitter) {
         super();
-        //
         activity = (MainActivity) context;
-        //imageView = (ImageView) activity.findViewById(R.id.image_view);
-        //
         this.twitter = twitter;
     }
 
@@ -41,12 +35,8 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
     @Override
     protected void onPostExecute(List<twitter4j.Status> s) {
+
         System.out.println("async おわったよ");
-
-        // これはできる。もちろん先頭の1個だけだが...
-        // Picasso.with(activity).load("http://i.imgur.com/DvpvklR.png").into(imageView);
-
-
 
         ArrayAdapter<String> imageURLs;
         ArrayList<String> me = new ArrayList<String>();
@@ -62,18 +52,7 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
         System.out.println("さて、どんだけとれてるかな？");
         System.out.println(me);
 
-        String[] asyncURIAry = {
-                "http://i.imgur.com/DvpvklR.png",
-                "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-                "http://i.imgur.com/DvpvklR.png",
-                "https://cdn-ak.f.st-hatena.com/images/fotolife/h/hogehoge223/20170111/20170111150101.jpg",
-                "http://i.imgur.com/DvpvklR.png"
-        };
-
-
-//        activity.rerenderGridView(asyncURIAry);
         activity.rerenderGridView(me);
-
     }
 
     @Override
@@ -96,28 +75,6 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
         System.out.println("Do!! Do!! Do!!");
 
-        // 非同期通信
-//        try {
-
-//            URL url = new URL(params[0]);
-//
-//            System.out.println("URL: " + url + "だぜ");
-//
-//            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//            con.setRequestMethod("GET");
-//            //
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(
-//                    con.getInputStream(), "UTF-8"));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                builder.append(line);
-//            }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-
-        //////////////// できます ///////////////////
         // 検索の実行
         QueryResult result = null;
 
@@ -134,7 +91,5 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
         }
 
         return result.getTweets();
-
-        //////////////// できます ///////////////////
     }
 }
