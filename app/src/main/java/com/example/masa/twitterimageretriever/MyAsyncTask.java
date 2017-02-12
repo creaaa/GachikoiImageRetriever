@@ -3,6 +3,7 @@ package com.example.masa.twitterimageretriever;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -97,23 +98,33 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 //                    System.out.println(hiduke + str);
 
                     //ツイート本文に画像URLが含まれていたら取
+                    // 単数枚
                     MediaEntity[] mentitys = tweet.getMediaEntities();
                     for(MediaEntity m: mentitys){
                         imageURLs.add(m.getMediaURL());
                     }
+
+//                    // 複数枚...ほんとうにこれでできてんのか？ → なんかダメだった
+//                    MediaEntity[] arrMediaExt = tweet.getExtendedMediaEntities();
+//                    for (MediaEntity m: arrMediaExt) {
+//                        imageURLs.add(m.getMediaURL());
+//                    }
+//
+//                    URLEntity[] entity = tweet.getURLEntities();
+//                    for (URLEntity urlEntity: entity) {
+//                        imageURLs.add(urlEntity.getExpandedURL());
+//                    }
                 }
 
                 if (result.hasNext()) {
                     query = result.nextQuery();
-                    Thread.sleep(1000);
+                    SystemClock.sleep(1000);
                 } else {
                     break;
                 }
             }
 
         } catch (TwitterException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

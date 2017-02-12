@@ -157,8 +157,10 @@ public class MainActivity extends AppCompatActivity {
 //            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
 //            task.execute();
 
+            new MyAsyncTask(MainActivity.this, tw).execute();
+
             // Flickr APIを叩く。
-            new FlickrAsyncTask(MainActivity.this).execute();
+            //new FlickrAsyncTask(MainActivity.this).execute();
 
 
             // false: 続いて↓のonQuery~がコールされる
