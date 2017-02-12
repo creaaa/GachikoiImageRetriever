@@ -3,6 +3,7 @@ package com.example.masa.twitterimageretriever;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,26 +34,16 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
     protected void onPreExecute() {
         super.onPreExecute();
         System.out.println("Pre Async!!");
+        //
+        activity.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPostExecute(List<twitter4j.Status> s) {
-
-        System.out.println("async おわったよ");
-
-//        ArrayList<String> imageURLs = new ArrayList<String>();
-
-//        for (twitter4j.Status tweet: s) {
-//            //ツイート本文に画像URLが含まれていたら取り出す
-//            MediaEntity[] mentitys = tweet.getMediaEntities();
-//            for(MediaEntity m: mentitys){
-//                imageURLs.add(m.getMediaURL());
-//            }
-//        }
-
-        System.out.println("さて、どんだけとれてるかな？");
+        System.out.println("async おわったよ。どれだけとれてるかな？");
         System.out.println(imageURLs);
 
+        activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
         activity.rerenderGridView(imageURLs);
     }
 
@@ -66,8 +57,9 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
     @Override
     protected void onCancelled() {
         super.onCancelled();
+        //
         System.out.println("on cancel Async!!");
-
+        activity.findViewById(R.id.progressBar).setVisibility(View.GONE);
     }
 
 
@@ -75,13 +67,17 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
     protected List<twitter4j.Status> doInBackground(Void... params) {
 
         System.out.println("Do!! Do!! Do!!");
+        return searchTwitterByQuery();
+    }
 
+
+    public List<twitter4j.Status> searchTwitterByQuery() {
         // 検索の実行
         QueryResult result = null;
 
         try {
             // 検索文字列を設定する
-            Query query = new Query("寺嶋由芙");
+            Query query = new Query("寺嶋由芙 -rt");
 //            query.setLocale("ja");	// 日本語のtweetに限定する
             query.setCount(100);  // 最大20tweetにする（デフォルトは15）
 
@@ -123,4 +119,5 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
         return result.getTweets();
     }
+
 }

@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     void rerenderGridView(ArrayList<String> imageURLs) {
 
+        oreoreImageURLs = null;
         oreoreImageURLs = imageURLs;
 
         // AsyncTaskからのカウントを受け取り表示する
@@ -152,9 +153,13 @@ public class MainActivity extends AppCompatActivity {
             // SubmitボタンorEnterKeyを押されたら呼び出されるメソッド
             System.out.println("submit touched");
 
-            // 非同期通信でURLを取得する
-            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
-            task.execute();
+            // Twitter APIを叩く。非同期通信でURLを取得する
+//            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
+//            task.execute();
+
+            // Flickr APIを叩く。
+            new FlickrAsyncTask(MainActivity.this).execute();
+
 
             // false: 続いて↓のonQuery~がコールされる
             // true:  呼び出されない
