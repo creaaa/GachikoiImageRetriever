@@ -4,8 +4,8 @@ package com.example.masa.twitterimageretriever;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -223,9 +223,9 @@ public class MainActivity extends AppCompatActivity {
             if(firstVisibleItem + visibleItemCount + 1 >= totalItemCount) {
                 //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwjDqaTxgonSAhVhzVQKHQdmD2sQjBwIBA&url=http%3A%2F%2Fwww.titech.ac.jp%2Fnews%2Fimg%2Fn000946_iwata_pic1.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
                 //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwiPpur2gonSAhVmhlQKHfCJAOoQjBwIBA&url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FKmDMc0KZe38%2Fmaxresdefault.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
-                oreoreImageURLs.add("http://blog-img.esuteru.com/image/article/201609/075b245397099c622fc25d6724ffd946.jpg");
+                //oreoreImageURLs.add("http://blog-img.esuteru.com/image/article/201609/075b245397099c622fc25d6724ffd946.jpg");
                 System.out.println("いま　ふえた");
-                notifyDataSetChanged();  // gridViewだからか？ これがないとだめっぽい
+                //notifyDataSetChanged();  // gridViewだからか？ これがないとだめっぽい
             } else {
                 System.out.println("きてる　きてる");
             }
@@ -255,11 +255,14 @@ public class MainActivity extends AppCompatActivity {
 
                         // 日付でファイル名を作成　
                         Date mDate = new Date();
-                        SimpleDateFormat fileName = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                        // 4.4の俺の実機だとだめだ
+                        //SimpleDateFormat fileName = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                        String fileName = "testimage";
 
                         // 保存処理開始
                         FileOutputStream fos = null;
-                        fos = new FileOutputStream(new File(root, fileName.format(mDate) + ".jpg"));
+//                        fos = new FileOutputStream(new File(root, fileName.format(mDate) + ".jpg"));
+                        fos = new FileOutputStream(new File(root, fileName + ".jpg"));
 
 //                        ImageView sampleImageView = (ImageView)findViewById(R.id.dialog_imageView);
                         // ただし、グリッドの1個めのが画像が保存されてしまうのだが...
@@ -376,6 +379,9 @@ public class MainActivity extends AppCompatActivity {
                                               long id, boolean checked) {
             // アクションモード時のアイテムの選択状態変更時
             System.out.println("きた5");
+
+            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+
         }
 
 

@@ -78,7 +78,7 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
         try {
             // 検索文字列を設定する
-            Query query = new Query("寺嶋由芙 -rt");
+            Query query = new Query("ゆっふぃー -rt");
 //            query.setLocale("ja");	// 日本語のtweetに限定する
             query.setCount(100);  // 最大20tweetにする（デフォルトは15）
 
@@ -86,6 +86,7 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
             // 最大1500件（15ページ）なので15回ループ
             for (int i = 1; i <= 7; i++) {
+
                 result = twitter.search(query);
                 System.out.println("ヒット数 : " + result.getTweets().size());
                 System.out.println("ページ数 : " + new Integer(i).toString());
