@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
 
     GridAdapter adapter;
 
+    // AsyncTaskから逆流してくるTweet ID
+    long maxId = 999999999999999999L;
+
 
     @SuppressWarnings("FieldCanBeLocal")
     //private IconList il;
@@ -111,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
         oreoreImageURLs = null;
         oreoreImageURLs = imageURLs;
 
+        oreoreImageURLs.add("http://cdn4.iconfinder.com/data/icons/basic-work-elements/154/download-load-file-512.png");
+
         // AsyncTaskからのカウントを受け取り表示する
         adapter.notifyDataSetChanged();
     }
@@ -158,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
 //            task.execute();
 
             new MyAsyncTask(MainActivity.this, tw).execute();
+
+            System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
+
 
             // Flickr APIを叩く。
             //new FlickrAsyncTask(MainActivity.this).execute();
@@ -238,6 +246,21 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
+
+            System.out.println("positionの位置だ？それは " + position + "だ！");
+            System.out.println("画像の個数だ？それは " + parent.getCount() + "だ！");
+
+            if (position + 1 == parent.getCount()) {
+                System.out.println("お前の正体は、リロードボタンだ！");
+
+                // ここに再ロード処理を書く
+                new MyAsyncTask(MainActivity.this, tw).execute();
+                System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
+
+
+                return;
+            }
+
 
             LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
@@ -321,6 +344,8 @@ public class MainActivity extends AppCompatActivity {
             // つまり、 position を使うことが重要！！！！！
             // ※ これは当然動きます
             //holder.imageView.setImageResource(icList.get(position));
+
+            System.out.println("positionの位置だ？それは " + position + "だ！");
 
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).into(holder.imageView);
 
