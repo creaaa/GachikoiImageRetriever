@@ -152,5 +152,4 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
         return result.getTweets();
     }
-
 }

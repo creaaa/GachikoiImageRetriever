@@ -25,4 +25,15 @@
         android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true" />
+
+    <Button
+        android:text="Retrieve Image!"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        />
+
 </RelativeLayout>

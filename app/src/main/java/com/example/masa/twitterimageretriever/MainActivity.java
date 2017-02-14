@@ -8,13 +8,11 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,16 +22,14 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import twitter4j.Twitter;
@@ -47,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     // UI
     private SearchView searchView;
     private String searchWord = "";
+
+    private Button button;
 
     GridAdapter adapter;
 
@@ -79,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
         // GridViewのインスタンスを生成
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
+        button = (Button) findViewById(R.id.button);
+
         // BaseAdapter を継承したGridAdapterのインスタンスを生成
         // 子要素のレイアウトファイル grid_items.xml を activity_main.xml に inflate するためにGridAdapterに引数として渡す
         adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, oreoreImageURLs);
@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
         gridview.setMultiChoiceModeListener(new Callback());
         gridview.setOnScrollListener(adapter);
 
+        // 空のときのビュー
+        gridview.setEmptyView(button);
+
+
         // OAuth認証用設定
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder.setOAuthConsumerKey(getString(R.string.twitter_consumer_key));
@@ -101,11 +105,11 @@ public class MainActivity extends AppCompatActivity {
         // Twitterオブジェクトの初期化
         this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
         //
-        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
     }
 
 
@@ -157,6 +161,11 @@ public class MainActivity extends AppCompatActivity {
 
             // SubmitボタンorEnterKeyを押されたら呼び出されるメソッド
             System.out.println("submit touched");
+
+            if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
+                button.setVisibility(View.GONE);
+            }
+
 
             // Twitter APIを叩く。非同期通信でURLを取得する
 //            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
@@ -272,36 +281,42 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View v) {
 
-                    try {
-                        // sdcardフォルダを指定
-                        File root = Environment.getExternalStorageDirectory();
+                    Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
-                        // 日付でファイル名を作成　
-                        Date mDate = new Date();
-                        // 4.4の俺の実機だとだめだ
-                        //SimpleDateFormat fileName = new SimpleDateFormat("yyyyMMdd_HHmmss");
-                        String fileName = "testimage";
+                    DeviceUtils.saveToFile(MainActivity.this, mBitmap);
 
-                        // 保存処理開始
-                        FileOutputStream fos = null;
-//                        fos = new FileOutputStream(new File(root, fileName.format(mDate) + ".jpg"));
-                        fos = new FileOutputStream(new File(root, fileName + ".jpg"));
 
-//                        ImageView sampleImageView = (ImageView)findViewById(R.id.dialog_imageView);
-                        // ただし、グリッドの1個めのが画像が保存されてしまうのだが...
-                        Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-
-                        // jpegで保存
-                        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-
-                        System.out.println("kitaw");
-
-                        // 保存処理終了
-                        fos.close();
-
-                    } catch (Exception e) {
-                        Log.e("Error", "" + e.toString());
-                    }
+//                    try {
+//                        // sdcardフォルダを指定
+//                        File root = Environment.getExternalStorageDirectory();
+//
+//                        // 日付でファイル名を作成　
+//                        Date mDate = new Date();
+//                        // 4.4の俺の実機だとだめだ
+//                        //SimpleDateFormat fileName = new SimpleDateFormat("yyyyMMdd_HHmmss");
+//
+//                        String fileName = String.valueOf(new Random().nextInt(1000));
+//
+//                        // 保存処理開始
+//                        FileOutputStream fos = null;
+////                        fos = new FileOutputStream(new File(root, fileName.format(mDate) + ".jpg"));
+//                        fos = new FileOutputStream(new File(root, fileName + ".jpg"));
+//
+////                        ImageView sampleImageView = (ImageView)findViewById(R.id.dialog_imageView);
+//                        // ただし、グリッドの1個めのが画像が保存されてしまうのだが...
+//                        Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+//
+//                        // jpegで保存
+//                        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+//
+//                        // 保存処理終了
+//                        fos.close();
+//
+//                        Toast.makeText(MainActivity.this, "saved", Toast.LENGTH_SHORT).show();
+//
+//                    } catch (Exception e) {
+//                        Log.e("Error", "" + e.toString());
+//                    }
 
                     return true;
                 }
