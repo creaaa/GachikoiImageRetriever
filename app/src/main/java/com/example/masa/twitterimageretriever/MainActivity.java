@@ -3,6 +3,7 @@ package com.example.masa.twitterimageretriever;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -73,6 +74,14 @@ public class MainActivity extends AppCompatActivity {
 //        for (int i = 0; i < il.maxNum() ; i++){
 //            iconList.add(il.getIcon(i));
 //        }
+
+
+        if (!TwitterUtils.hasAccessToken(this)) {
+            Intent intent = new Intent(this, TwitterOAuthActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
 
         // GridViewのインスタンスを生成
         GridView gridview = (GridView) findViewById(R.id.gridview);

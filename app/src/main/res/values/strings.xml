@@ -3,4 +3,7 @@
     <string name="search_menu_query_hint_text">Lady Gaga</string>
     <string name="path_image_stroage">hogehoge</string>
     <string name="extension_save_image">fugafuga</string>
+    <string name="twitter_oauth">Auth!</string>
+
+    <string name="twitter_callback_url">gabu://twitter</string>
 </resources>
