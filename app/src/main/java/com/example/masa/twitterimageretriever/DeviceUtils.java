@@ -15,6 +15,7 @@ public class DeviceUtils {
     public static void saveToFile(Context context, Bitmap bitmap) {
 
         if (!sdcardWriteReady()) {
+            Toast.makeText(context, "This device can't save image to SDcard...", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -35,6 +36,7 @@ public class DeviceUtils {
             Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
+            Toast.makeText(context, "save failed...", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
