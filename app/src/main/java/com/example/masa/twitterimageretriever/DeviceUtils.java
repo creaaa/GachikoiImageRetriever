@@ -20,14 +20,33 @@ public class DeviceUtils {
         }
 
         try {
-            File file = new File(Environment.getExternalStorageDirectory()
-                    .getPath() + "/" + Environment.DIRECTORY_PICTURES + context.getResources().getString(R.string.path_image_stroage));
+
+            // 引数にファイルもしくはディレクトリ名を指定し、該当するFileオブジェクトを生成
+            // 要は、/storage/emulated/0/Pictureshogehoge に対し、Fileクラスのオブジェクトである「file」を対応させた。
+            // これにより、今後このパスにあるファイルを、fileオブジェクトで扱える(=読み書きできる)ようになる。
+            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" +
+                    Environment.DIRECTORY_PICTURES + "/" +
+                    context.getResources().getString(R.string.path_image_stroage));
+
+            // 必要なすべての親ディレクトリを含めてディレクトリが生成された場合はtrue、
+            // 生成されなかった場合は false ※ここ、「既に存在した場合は」falseかも。
+            Boolean res = null;
+
             if (!file.exists()) {
-                file.mkdir();
+                //res = file.getParentFile().mkdir();
+                res = file.mkdirs();
+            }
+
+            if (res == false) {
+                System.out.println("ディレクトリは作られていない");
             }
 
             String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + "." + context.getResources().getString(R.string.extension_save_image);
+//            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg";
+
             FileOutputStream out = new FileOutputStream(AttachName);
+
+
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.flush();
             out.close();
@@ -41,14 +60,15 @@ public class DeviceUtils {
         }
     }
 
+
     private static void mediaScan(Context context, String[] paths) {
         String[] mimeTypes = {"image/jpeg"};
         MediaScannerConnection.scanFile(context, paths, mimeTypes, null);
     }
 
+
     private static boolean sdcardWriteReady() {
         String state = Environment.getExternalStorageState();
-        return (Environment.MEDIA_MOUNTED.equals(state));
-
+        return (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
     }
 }

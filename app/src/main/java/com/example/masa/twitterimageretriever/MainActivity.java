@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
     // private List<Integer> iconList = new ArrayList<Integer>();
 
-    Twitter tw;
+    static Twitter tw;
 
     ArrayList<String> oreoreImageURLs = new ArrayList<String>();
 
