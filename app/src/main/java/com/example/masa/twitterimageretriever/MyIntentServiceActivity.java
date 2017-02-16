@@ -56,7 +56,7 @@ public class MyIntentServiceActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 3000, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 20000, pendingIntent);
     }
 
 

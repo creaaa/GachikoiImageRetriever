@@ -24,9 +24,20 @@ public class DeviceUtils {
             // 引数にファイルもしくはディレクトリ名を指定し、該当するFileオブジェクトを生成
             // 要は、/storage/emulated/0/Pictureshogehoge に対し、Fileクラスのオブジェクトである「file」を対応させた。
             // これにより、今後このパスにあるファイルを、fileオブジェクトで扱える(=読み書きできる)ようになる。
+
+            String path = "";
+
+            if (context instanceof MainActivity) {
+                path = "Gachikoi";
+            }
+            else {
+                path = "AutoCollect";
+            }
+
             File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" +
-                    Environment.DIRECTORY_PICTURES + "/" +
-                    context.getResources().getString(R.string.path_image_stroage));
+                    Environment.DIRECTORY_PICTURES + "/" + path);
+                    //context.getResources().getString(R.string.path_image_storage));
+
 
             // 必要なすべての親ディレクトリを含めてディレクトリが生成された場合はtrue、
             // 生成されなかった場合は false ※ここ、「既に存在した場合は」falseかも。

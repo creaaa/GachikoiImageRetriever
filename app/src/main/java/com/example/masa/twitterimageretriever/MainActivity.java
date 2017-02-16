@@ -55,12 +55,6 @@ public class MainActivity extends AppCompatActivity {
     // AsyncTaskから逆流してくるTweet ID
     long maxId = 999999999999999999L;
 
-
-    @SuppressWarnings("FieldCanBeLocal")
-    //private IconList il;
-    // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
-    // private List<Integer> iconList = new ArrayList<Integer>();
-
     static Twitter twitter;
 
     ArrayList<String> oreoreImageURLs = new ArrayList<String>();
@@ -120,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         // 5. サービスの起動
-        scheduleService();
-
-
+        if (TwitterUtils.hasAccessToken(this)) {
+            scheduleService();
+        }
     }
 
 
@@ -131,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "ServiceTest";
 
-    protected void scheduleService() {
+    protected void  scheduleService() {
 
         System.out.println("はいー scheduleService はじまりましたよー");
         Log.d(TAG, "scheduleService()");
@@ -265,7 +259,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-        
     }
 
 
@@ -287,16 +280,13 @@ public class MainActivity extends AppCompatActivity {
                 //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwjDqaTxgonSAhVhzVQKHQdmD2sQjBwIBA&url=http%3A%2F%2Fwww.titech.ac.jp%2Fnews%2Fimg%2Fn000946_iwata_pic1.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
                 //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwiPpur2gonSAhVmhlQKHfCJAOoQjBwIBA&url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FKmDMc0KZe38%2Fmaxresdefault.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
                 //oreoreImageURLs.add("http://blog-img.esuteru.com/image/article/201609/075b245397099c622fc25d6724ffd946.jpg");
-                System.out.println("いま　ふえた");
                 //notifyDataSetChanged();  // gridViewだからか？ これがないとだめっぽい
             } else {
-                System.out.println("きてる　きてる");
             }
         }
 
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
-
         }
 
         @Override
