@@ -1,7 +1,9 @@
 
 package com.example.masa.twitterimageretriever;
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -117,7 +120,31 @@ public class MainActivity extends AppCompatActivity {
 
 
         // 5. サービスの起動
+        scheduleService();
+
+
     }
+
+
+
+    /* for Service */
+
+    final static String TAG = "ServiceTest";
+
+    protected void scheduleService() {
+
+        System.out.println("はいー scheduleService はじまりましたよー");
+        Log.d(TAG, "scheduleService()");
+
+        Context context = getBaseContext();
+
+        Intent intent = new Intent(context, MyIntentService.class);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 3000, pendingIntent);
+    }
+
 
 
     /* Callback */
@@ -333,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                    } catch (Exception e) {
 //                        Log.e("Error", "" + e.toString());
-//                    }
+//
                     return true;
                 }
             });
