@@ -65,7 +65,7 @@ public class MyIntentServiceActivity extends AppCompatActivity {
         System.out.println("キャンセル来てんのよ");
 
         Intent intent = new Intent(context, MyIntentService.class);
-        PendingIntent pendingIntent = PendingIntent.getService( context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);

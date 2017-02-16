@@ -61,6 +61,8 @@ public class MyIntentService extends IntentService {
             String s = result.getTweets().get(0).getText();
             Log.d(TAG, s);
 
+
+
         } catch (TwitterException e) {
             e.printStackTrace();
         }
