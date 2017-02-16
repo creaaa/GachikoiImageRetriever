@@ -52,7 +52,9 @@ public class DeviceUtils {
             out.close();
             mediaScan(context, new String[]{AttachName});
 
-            Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show();
+            if (context instanceof MainActivity) {
+                Toast.makeText(context, "saved", Toast.LENGTH_SHORT).show();
+            }
 
         } catch (Exception e) {
             Toast.makeText(context, "save failed...", Toast.LENGTH_SHORT).show();
