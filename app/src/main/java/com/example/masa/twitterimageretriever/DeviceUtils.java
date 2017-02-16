@@ -30,16 +30,16 @@ public class DeviceUtils {
 
             // 必要なすべての親ディレクトリを含めてディレクトリが生成された場合はtrue、
             // 生成されなかった場合は false ※ここ、「既に存在した場合は」falseかも。
-            Boolean res = null;
+//            Boolean res = null;
 
             if (!file.exists()) {
-                //res = file.getParentFile().mkdir();
-                res = file.mkdirs();
+//                res = file.mkdirs();
+                file.mkdirs();
             }
-
-            if (res == false) {
-                System.out.println("ディレクトリは作られていない");
-            }
+//
+//            if (res == false) {
+//                System.out.println("ディレクトリは作られていない");
+//            }
 
             String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + "." + context.getResources().getString(R.string.extension_save_image);
 //            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg";

@@ -88,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
 
         button = (Button) findViewById(R.id.button);
 
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
+                    button.setVisibility(View.GONE);
+                }
+
+                new MyAsyncTask(MainActivity.this, tw).execute();
+
+                System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
+            }
+        });
+
+
         // BaseAdapter を継承したGridAdapterのインスタンスを生成
         // 子要素のレイアウトファイル grid_items.xml を activity_main.xml に inflate するためにGridAdapterに引数として渡す
         adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, oreoreImageURLs);
@@ -164,6 +179,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+
+            case R.id.crawler:
+                startActivity(new Intent(this, SimplePreferenceActivity.class));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        
+    }
+
     private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String searchWord) {
@@ -174,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
             if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
                 button.setVisibility(View.GONE);
             }
-
 
             // Twitter APIを叩く。非同期通信でURLを取得する
 //            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
