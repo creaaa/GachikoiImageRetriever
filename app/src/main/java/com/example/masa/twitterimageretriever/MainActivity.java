@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     // 要素をArrayListで設定。なぜIntegerか？このIntegerは RのIDだからだ！！！！！
     // private List<Integer> iconList = new ArrayList<Integer>();
 
-    static Twitter tw;
+    static Twitter twitter;
 
     ArrayList<String> oreoreImageURLs = new ArrayList<String>();
 
@@ -69,13 +69,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
-
-//        il = new IconList();
-//        for (int i = 0; i < il.maxNum() ; i++){
-//            iconList.add(il.getIcon(i));
-//        }
-
-
+        // 1. OAuth認証がまだなら、認証画面へ遷移
         if (!TwitterUtils.hasAccessToken(this)) {
             Intent intent = new Intent(this, TwitterOAuthActivity.class);
             startActivity(intent);
@@ -83,31 +77,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // GridViewのインスタンスを生成
+        // 2. UI描画。GridViewのインスタンスを生成
         GridView gridview = (GridView) findViewById(R.id.gridview);
 
         button = (Button) findViewById(R.id.button);
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
                     button.setVisibility(View.GONE);
                 }
-
-                new MyAsyncTask(MainActivity.this, tw).execute();
-
+                new MyAsyncTask(MainActivity.this, twitter).execute();
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
             }
         });
 
-
-        // BaseAdapter を継承したGridAdapterのインスタンスを生成
-        // 子要素のレイアウトファイル grid_items.xml を activity_main.xml に inflate するためにGridAdapterに引数として渡す
+        // 3. Adapterの生成・セット
         adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, oreoreImageURLs);
-
-        // gridViewにadapterをセット
         gridview.setAdapter(adapter);
 
         gridview.setOnItemClickListener(adapter);
@@ -119,23 +105,22 @@ public class MainActivity extends AppCompatActivity {
         gridview.setEmptyView(button);
 
 
-        // OAuth認証用設定
+        // 4. Twitterオブジェクトの初期化
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+
         configurationBuilder.setOAuthConsumerKey(getString(R.string.twitter_consumer_key));
         configurationBuilder.setOAuthConsumerSecret(getString(R.string.twitter_consumer_secret));
         configurationBuilder.setOAuthAccessToken(getString(R.string.twitter_access_token));
         configurationBuilder.setOAuthAccessTokenSecret(getString(R.string.twitter_access_token_secret));
 
-        // Twitterオブジェクトの初期化
-        this.tw = new TwitterFactory(configurationBuilder.build()).getInstance();
-        //
-//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
-//        oreoreImageURLs.add("http://l-tool.little-net.com/tools/cart/0401/sample/img/sample.jpg");
+        this.twitter = new TwitterFactory(configurationBuilder.build()).getInstance();
+
+
+        // 5. サービスの起動
     }
 
+
+    /* Callback */
 
     void rerenderGridView(ArrayList<String> imageURLs) {
 
@@ -147,6 +132,68 @@ public class MainActivity extends AppCompatActivity {
         // AsyncTaskからのカウントを受け取り表示する
         adapter.notifyDataSetChanged();
     }
+
+
+    private boolean setSearchWord(String searchWord) {
+
+        ActionBar actionBar = this.getSupportActionBar();
+        //noinspection ConstantConditions,ConstantConditions
+        actionBar.setTitle(searchWord);
+        actionBar.setDisplayShowTitleEnabled(true);
+
+        if (searchWord != null && !searchWord.equals("")) {
+            // searchWordがあることを確認
+            this.searchWord = searchWord;
+        }
+
+        // 虫眼鏡アイコンを隠す
+        this.searchView.setIconified(false);
+        // SearchViewを隠す
+        this.searchView.onActionViewCollapsed();
+        // Focusを外す
+        this.searchView.clearFocus();
+
+        return false;
+    }
+
+
+    private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String searchWord) {
+
+            // SubmitボタンorEnterKeyを押されたら呼び出されるメソッド
+            System.out.println("submit touched");
+
+            if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
+                button.setVisibility(View.GONE);
+            }
+
+            // Twitter APIを叩く。非同期通信でURLを取得する
+//            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
+//            task.execute();
+
+            new MyAsyncTask(MainActivity.this, twitter).execute();
+
+            System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
+
+            // Flickr APIを叩く。
+            //new FlickrAsyncTask(MainActivity.this).execute();
+
+
+            // false: 続いて↓のonQuery~がコールされる
+            // true:  呼び出されない
+            return setSearchWord(searchWord); // false
+            //return true;
+        }
+
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            // 入力される度に呼び出される
+            System.out.println("input");
+            return false;
+        }
+    };
 
 
     @Override
@@ -194,79 +241,13 @@ public class MainActivity extends AppCompatActivity {
         
     }
 
-    private SearchView.OnQueryTextListener onQueryTextListener = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String searchWord) {
-
-            // SubmitボタンorEnterKeyを押されたら呼び出されるメソッド
-            System.out.println("submit touched");
-
-            if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
-                button.setVisibility(View.GONE);
-            }
-
-            // Twitter APIを叩く。非同期通信でURLを取得する
-//            MyAsyncTask task = new MyAsyncTask(MainActivity.this, tw);
-//            task.execute();
-
-            new MyAsyncTask(MainActivity.this, tw).execute();
-
-            System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
-
-
-            // Flickr APIを叩く。
-            //new FlickrAsyncTask(MainActivity.this).execute();
-
-
-            // false: 続いて↓のonQuery~がコールされる
-            // true:  呼び出されない
-            return setSearchWord(searchWord); // false
-            //return true;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            // 入力される度に呼び出される
-            System.out.println("input");
-            return false;
-        }
-    };
-
-
-    private boolean setSearchWord(String searchWord) {
-
-        ActionBar actionBar = this.getSupportActionBar();
-        //noinspection ConstantConditions,ConstantConditions
-        actionBar.setTitle(searchWord);
-        actionBar.setDisplayShowTitleEnabled(true);
-
-        if (searchWord != null && !searchWord.equals("")) {
-            // searchWordがあることを確認
-            this.searchWord = searchWord;
-        }
-
-        // 虫眼鏡アイコンを隠す
-        this.searchView.setIconified(false);
-        // SearchViewを隠す
-        this.searchView.onActionViewCollapsed();
-        // Focusを外す
-        this.searchView.clearFocus();
-
-        return false;
-    }
-
-
-    ///////////
-    // 　UI  //
-    ///////////
-
-    class ViewHolder {
-        ImageView imageView;
-    }
-
 
     // BaseAdapter を継承した GridAdapter クラスのインスタンス生成
     class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+
+        class ViewHolder {
+            ImageView imageView;
+        }
 
         private LayoutInflater inflater;
         private int layoutId;
@@ -301,9 +282,8 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("お前の正体は、リロードボタンだ！");
 
                 // ここに再ロード処理を書く
-                new MyAsyncTask(MainActivity.this, tw).execute();
+                new MyAsyncTask(MainActivity.this, twitter).execute();
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
-
 
                 return;
             }
@@ -322,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
                     DeviceUtils.saveToFile(MainActivity.this, mBitmap);
-
 
 //                    try {
 //                        // sdcardフォルダを指定
@@ -355,7 +334,6 @@ public class MainActivity extends AppCompatActivity {
 //                    } catch (Exception e) {
 //                        Log.e("Error", "" + e.toString());
 //                    }
-
                     return true;
                 }
             });
@@ -372,7 +350,6 @@ public class MainActivity extends AppCompatActivity {
             this.layoutId = layoutId;
             // icList = iconList;
         }
-
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -462,27 +439,9 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-
             System.out.println("きた3");
-
-            // 決定ボタン押下時
-//            final int checkedCount = get().getCheckedItemCount();
-//            SparseBooleanArray list = getListView().getCheckedItemPositions();
-//            String str = "";
-//
-//            for(int i=0;i<GENRES.length;i++){
-//                boolean checked = list.get(i);
-//                if (checked == true){
-//                    str = str+GENRES[i] + " ";
-//                }
-//            }
-//
-//            Intent intent = new Intent(getApplicationContext(), ResultDisp.class);
-//            intent.putExtra("checked_list", str);
-//            startActivity(intent);
         }
     }
 }

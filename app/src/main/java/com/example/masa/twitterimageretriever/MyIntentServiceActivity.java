@@ -62,7 +62,7 @@ public class MyIntentServiceActivity extends AppCompatActivity {
 
     protected void cancelService(){ Context context = getBaseContext();
 
-        System.out.println("キャンセル来てんのよ");
+        System.out.println("キャンセル 来てるんよ");
 
         Intent intent = new Intent(context, MyIntentService.class);
         PendingIntent pendingIntent = PendingIntent.getService(context, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
