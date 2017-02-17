@@ -228,7 +228,7 @@ public class MyIntentService extends IntentService {
 
                     for (String URL : imageURLs) {
                         mBitmap = getBitmapFromURL(URL);
-                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap, "autoCollect");
                         System.out.println("保存してやったり！");
                     }
 

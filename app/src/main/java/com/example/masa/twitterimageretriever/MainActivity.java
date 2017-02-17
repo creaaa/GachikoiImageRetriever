@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TWITTER_ACCOUNT_NAME = "twitter_account_name";
 
     // UI
+
+    GridView gridview;
+
     private SearchView searchView;
     private String searchWord = "";
 
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // 2. UI描画。GridViewのインスタンスを生成
-        GridView gridview = (GridView) findViewById(R.id.gridview);
+        gridview = (GridView) findViewById(R.id.gridview);
 
         button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -97,8 +100,6 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
             }
         });
-
-
 
 
         // 3. Adapterの生成・セット
@@ -127,9 +128,14 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. サービスの起動
         if (TwitterUtils.hasAccessToken(this)) {
-            scheduleService();
+            //scheduleService();
         }
+
+        // 6. Flickrガチャ用サービスの起動
+        scheduleFlickrGachaService();
+
     }
+
 
     @Override
     protected void onRestart() {
@@ -152,6 +158,8 @@ public class MainActivity extends AppCompatActivity {
     /* for Service */
 
     final static String TAG = "ServiceTest";
+    final static String TAG2 = "FlickrGacha";
+
 
     protected void  scheduleService() {
 
@@ -171,6 +179,22 @@ public class MainActivity extends AppCompatActivity {
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
+    }
+
+
+    private void scheduleFlickrGachaService() {
+
+        Log.d(TAG2, "FlickrGachaService()");
+
+        Context context = getBaseContext();
+
+        Intent intent = new Intent(context, FlickrGachaIntentService.class);
+
+        PendingIntent pendingIntent = PendingIntent.getService(context, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
+
     }
 
 
@@ -299,11 +323,9 @@ public class MainActivity extends AppCompatActivity {
     // BaseAdapter を継承した GridAdapter クラスのインスタンス生成
     class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
-
         class ViewHolder {
             ImageView imageView;
         }
-
 
         private LayoutInflater inflater;
         private int layoutId;
@@ -362,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
-                    DeviceUtils.saveToFile(MainActivity.this, mBitmap);
+                    DeviceUtils.saveToFile(MainActivity.this, mBitmap, "Gachikoi");
 //                    try {
 //                        // sdcardフォルダを指定
 //                        File root = Environment.getExternalStorageDirectory();
@@ -410,27 +432,27 @@ public class MainActivity extends AppCompatActivity {
             ViewHolder holder;
 
             if (convertView == null) {
-                // main.xml の <GridView .../> に grid_items.xml を inflate して convertView とする
+
                 convertView = inflater.inflate(layoutId, parent, false);
-                // ViewHolder を生成
+
                 holder = new ViewHolder();
                 holder.imageView = (ImageView) convertView.findViewById(R.id.image_view);
+
                 convertView.setTag(holder);
             }
             else {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            // icList(もともと iconList = RのIDが格納されている) の中のIDを、
-            // positionを使い取得している。
-            // これにより、位置ごとに異なるimageをセットしている。
-            // つまり、 position を使うことが重要！！！！！
-            // ※ これは当然動きます
-            //holder.imageView.setImageResource(icList.get(position));
 
             System.out.println("ここはgetView。positionの位置だ？それは " + position + "だ！");
-
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).into(holder.imageView);
+
+            if (position % 2 == 0) {
+                convertView.setBackgroundColor(Color.BLACK);
+            } else {
+                convertView.setBackgroundColor(Color.parseColor("#444444"));
+            }
 
             return convertView;
         }
@@ -488,8 +510,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("きた5");
 
 //            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
-
-            findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+//            gridview.findViewById(R.id.image_view).setBackgroundColor(Color.BLUE);
         }
 
         @Override

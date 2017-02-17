@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 
 public class DeviceUtils {
 
-    public static void saveToFile(Context context, Bitmap bitmap) {
+    public static void saveToFile(Context context, Bitmap bitmap, String folderName) {
 
         if (!sdcardWriteReady()) {
             Toast.makeText(context, "This device can't save image to SDcard...", Toast.LENGTH_SHORT).show();
@@ -25,17 +25,18 @@ public class DeviceUtils {
             // 要は、/storage/emulated/0/Pictureshogehoge に対し、Fileクラスのオブジェクトである「file」を対応させた。
             // これにより、今後このパスにあるファイルを、fileオブジェクトで扱える(=読み書きできる)ようになる。
 
-            String path = "";
+//            String path = "";
 
-            if (context instanceof MainActivity) {
-                path = "Gachikoi";
-            }
-            else {
-                path = "AutoCollect";
-            }
+//            if (context instanceof MainActivity) {
+//                path = "Gachikoi";
+//            }
+//            else {
+//                path = "AutoCollect";
+//            }
 
             File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" +
-                    Environment.DIRECTORY_PICTURES + "/" + path);
+                    // Environment.DIRECTORY_PICTURES + "/" + path);
+                    Environment.DIRECTORY_PICTURES + "/" + folderName);
                     //context.getResources().getString(R.string.path_image_storage));
 
 
