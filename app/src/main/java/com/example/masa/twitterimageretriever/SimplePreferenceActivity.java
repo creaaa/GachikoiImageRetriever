@@ -44,10 +44,10 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 Context.MODE_PRIVATE);
                 editor = preferences.edit();
 
-                RadioGroup rg = (RadioGroup) findViewById(R.id.RadioGroup);
+                RadioGroup rg = (RadioGroup) findViewById(R.id.RG1);
                 RadioButton rb = (RadioButton) findViewById(rg.getCheckedRadioButtonId());
 
-                RadioGroup rg2 = (RadioGroup) findViewById(R.id.RadioGroup2);
+                RadioGroup rg2 = (RadioGroup) findViewById(R.id.RG2);
                 RadioButton rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
 
                 editor.putString(TWITTER_ACCOUNT_NAME, String.valueOf(et.getText()));
