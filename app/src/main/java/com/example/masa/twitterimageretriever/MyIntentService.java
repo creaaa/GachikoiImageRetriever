@@ -1,7 +1,10 @@
+
 package com.example.masa.twitterimageretriever;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -10,15 +13,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Random;
 
-import twitter4j.MediaEntity;
-import twitter4j.Query;
-import twitter4j.QueryResult;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.api.TimelinesResources;
 import twitter4j.conf.ConfigurationBuilder;
 
 
@@ -27,8 +30,22 @@ public class MyIntentService extends IntentService {
     final static String TAG = "ServiceTest";
 
     private Twitter twitter;
+    private Bitmap  mBitmap;
 
-    private Bitmap mBitmap;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+
+    private static final String PREF_NAME = "setting";
+
+    //private static final String TWITTER_ACCOUNT_NAME = "twitter_account_name";
+    private static final String LATEST_TWEET_ID = "latest_tweet_id";
+
+
+    // Preferenceから抽出した、取得したいタイムラインのユーザー
+    //String twitter_account_name;
+
+    // Preferenceから抽出した、最後に取得した最新のつぶやきID
+    long latest_tweet_id;
 
 
     public Bitmap getBitmapFromURL(String src) {
@@ -50,6 +67,7 @@ public class MyIntentService extends IntentService {
 
     @Override
     public void onCreate() {
+
         super.onCreate();
         //
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
@@ -60,6 +78,12 @@ public class MyIntentService extends IntentService {
 
         // Twitterオブジェクトの初期化
         this.twitter = new TwitterFactory(configurationBuilder.build()).getInstance();
+
+        pref = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = pref.edit();
+
+//        twitter_account_name = pref.getString(TWITTER_ACCOUNT_NAME, "@NaN");
+        latest_tweet_id = pref.getLong(LATEST_TWEET_ID, 1);
     }
 
     public MyIntentService(String name) {
@@ -73,130 +97,81 @@ public class MyIntentService extends IntentService {
     }
 
 
-    String s = "初期値";
-
     @Override protected void onHandleIntent(Intent intent) {
 
         Log.d(TAG, "onHandleIntent");
 
+        // Preferenceから抽出した、取得したいTwitterAccount名
+        String ta = intent.getStringExtra("ta");
+
         // 検索の実行
-        QueryResult result = null;
+        // QueryResult result = null;
 
         try {
             // 検索文字列を設定する
-            Query query = new Query("ゆっふぃー -rt");
-            query.setCount(100);  // 最大20tweetにする（デフォルトは15)
-
-            result = this.twitter.search(query);
-
-//            String s = result.getTweets().get(0).getText();
-//            Log.d(TAG, s);
-
-            ArrayList<String> imageURLs = new ArrayList<>();
-
-            for (twitter4j.Status tweet: result.getTweets()) {
-                MediaEntity[] mentitys = tweet.getMediaEntities();
-                for(MediaEntity m: mentitys){
-                    imageURLs.add(m.getMediaURL());
-                }
-            }
-
-            if (imageURLs != null) {
-
-                int count = imageURLs.size();
-                int randomIdx = new Random().nextInt(count);
-
-//                System.out.println(imageURLs.get(randomIdx));
-
-                mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
-                System.out.println(mBitmap + "だぜ");
-
+//
+//            String searchQuery = ta;
+//
+//            // Query query = new Query("ニンテンドースイッチ -rt");
+//            Query query = new Query(ta + " -rt");
+//            query.setCount(100);  // 最大20tweetにする（デフォルトは15)
+//            query.sinceId(latest_tweet_id);
+//
+//            result = this.twitter.search(query);
+//
+//            ArrayList<String> imageURLs = new ArrayList<>();
+//
+//            // 最新のつぶやきのIDを取得
+//            long latestID = result.getTweets().get(0).getId();
+//            editor.putLong(LATEST_ID, latestID);
+//            editor.commit();
+//
+//            for (twitter4j.Status tweet : result.getTweets()) {
+//                MediaEntity[] mentitys = tweet.getMediaEntities();
+//                for (MediaEntity m : mentitys) {
+//                    imageURLs.add(m.getMediaURL());
+//                }
+//            }
+//
+//            if (imageURLs != null) {
+//
+//                int count = imageURLs.size();
+//                int randomIdx = new Random().nextInt(count);
+//
+//                mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
+//                System.out.println(mBitmap + "だぜ");
+//
 //                if (mBitmap != null) {
 //                    DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
 //                    System.out.println("保存してやったり！");
 //                } else {
 //                    System.out.println("そもそも画像 なかったアルよ");
 //                }
+//            }
 
-                if (mBitmap != null) {
-                    // saveToFile(getApplicationContext(), mBitmap);
-                    DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-                    System.out.println("保存してやったり！");
-                } else {
-                    System.out.println("そもそも画像 なかったアルよ");
-                }
 
+            TimelinesResources timeline = twitter.timelines();
+
+            Paging paging = new Paging();    // Pagingオブジェクトを作成
+            paging.setPage(1);               // ページ番号を指定
+            paging.count(5);               // 1ページから取得するツイート数を指定
+//    		paging.setMaxId(ツイートのID);     // MaxIdよりも後のツイートを取得するよう指定
+            paging.setSinceId(latest_tweet_id);  // SinceIdよりも前のツイートを取得するよう指定
+
+
+            // User user = twitter.showUser("@crea_mcz");
+            User user = twitter.showUser(ta);
+            long id = user.getId();
+
+            ResponseList tweets = timeline.getUserTimeline(id, paging);
+
+            for (int i = 0; i < tweets.size(); i++) {
+                Status tweet = (Status) tweets.get(i);
+                System.out.println("ツイート："  + tweet.getText());
             }
 
         } catch (TwitterException e) {
             e.printStackTrace();
         }
     }
-
-
-//
-//    public void saveToFile(Context context, Bitmap bitmap) {
-//
-//        if (!sdcardWriteReady()) {
-//            Toast.makeText(context, "This device can't save image to SDcard...", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        try {
-//
-//            // 引数にファイルもしくはディレクトリ名を指定し、該当するFileオブジェクトを生成
-//            // 要は、/storage/emulated/0/Pictureshogehoge に対し、Fileクラスのオブジェクトである「file」を対応させた。
-//            // これにより、今後このパスにあるファイルを、fileオブジェクトで扱える(=読み書きできる)ようになる。
-//            File file = new File(Environment.getExternalStorageDirectory().getPath() + "/" +
-//                    Environment.DIRECTORY_PICTURES + "/" +
-//                    context.getResources().getString(R.string.path_image_stroage));
-//
-//            // 必要なすべての親ディレクトリを含めてディレクトリが生成された場合はtrue、
-//            // 生成されなかった場合は false ※ここ、「既に存在した場合は」falseかも。
-////            Boolean res = null;
-//
-//            if (!file.exists()) {
-////                res = file.mkdirs();
-//                file.mkdirs();
-//            }
-////
-////            if (res == false) {
-////                System.out.println("ディレクトリは作られていない");
-////            }
-//
-//            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + "." + context.getResources().getString(R.string.extension_save_image);
-////            String AttachName = file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg";
-//
-//            FileOutputStream out = new FileOutputStream(AttachName);
-//
-//
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-//            out.flush();
-//            out.close();
-//            mediaScan(context, new String[]{AttachName}, file);
-//
-//        } catch (Exception e) {
-//            //Toast.makeText(context, "save failed...", Toast.LENGTH_SHORT).show();
-//            e.printStackTrace();
-//            //
-//        }
-//    }
-//
-//
-//    private static void mediaScan(Context context, String[] paths, File file) {
-//
-//        String[] mimeTypes = {"image/jpeg"};
-//         MediaScannerConnection.scanFile(context, paths, mimeTypes, null);
-//
-////        Uri contentUri = Uri.fromFile(file);
-////        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
-////        context.sendBroadcast(mediaScanIntent);
-//    }
-//
-//
-//    private static boolean sdcardWriteReady() {
-//        String state = Environment.getExternalStorageState();
-//        return (Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state));
-//    }
-
 }

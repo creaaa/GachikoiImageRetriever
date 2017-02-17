@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,8 +42,12 @@ import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 
-@SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity {
+
+    SharedPreferences pref;
+
+    private static final String PREF_NAME = "setting";
+    private static final String TWITTER_ACCOUNT_NAME = "twitter_account_name";
 
     // UI
     private SearchView searchView;
@@ -66,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //
+
+        // 0. preference
+        pref = this.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
+
         // 1. OAuth認証がまだなら、認証画面へ遷移
         if (!TwitterUtils.hasAccessToken(this)) {
             Intent intent = new Intent(this, TwitterOAuthActivity.class);
@@ -88,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
             }
         });
+
+
+
 
         // 3. Adapterの生成・セット
         adapter = new GridAdapter(this.getApplicationContext(), R.layout.grid_items, oreoreImageURLs);
@@ -119,7 +132,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        //
+        System.out.println("onRestart 来ましたね");
 
+        if (pref != null) {
+            System.out.println(pref.getString(TWITTER_ACCOUNT_NAME, "NaN"));
+
+        }
+    }
+
+    @Override
+    protected void onStop() {
+
+        new MyAsyncTask(MainActivity.this, twitter).execute();
+        System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
+        //
+        super.onStop();
+    }
 
     /* for Service */
 
@@ -133,10 +165,16 @@ public class MainActivity extends AppCompatActivity {
         Context context = getBaseContext();
 
         Intent intent = new Intent(context, MyIntentService.class);
+
+        if (pref != null) {
+            String twitter_account = pref != null ? pref.getString(TWITTER_ACCOUNT_NAME, "NaN") : "NaN";
+            intent.putExtra("ta", twitter_account);
+        }
+
         PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 3000, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
     }
 
 

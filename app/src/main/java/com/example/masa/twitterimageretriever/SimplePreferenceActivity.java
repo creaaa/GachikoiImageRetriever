@@ -12,13 +12,10 @@ import android.widget.RadioGroup;
 
 public class SimplePreferenceActivity extends AppCompatActivity {
 
-//    SharedPreferences pref;
-//    SharedPreferences.Editor editor;
     private static final String PREF_NAME = "setting";
 
     private static final String TWITTER_ACCOUNT_NAME = "twitter_account_name";
     private static final String DURATION = "duration";
-
 
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -42,9 +39,9 @@ public class SimplePreferenceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 System.out.println("OK touched");
                 //
-                //SharedPreferences preferences = SimplePreferenceActivity.this.getSharedPreferences(PREF_NAME,
-//                Context.MODE_PRIVATE);
-//                SharedPreferences.Editor editor = preferences.edit();
+                preferences = SimplePreferenceActivity.this.getSharedPreferences(PREF_NAME,
+                Context.MODE_PRIVATE);
+                editor = preferences.edit();
 
                 RadioGroup rg = (RadioGroup) findViewById(R.id.RadioGroup);
                 RadioButton rb = (RadioButton) findViewById(rg.getCheckedRadioButtonId());
