@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -128,11 +129,18 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. サービスの起動
         if (TwitterUtils.hasAccessToken(this)) {
-            //scheduleService();
+
+            String crawler_duration = pref.getString("crawler_duration", "");
+            System.out.println("クローラ期間: " + crawler_duration);
+
+            if (crawler_duration.equals("1 hour") || crawler_duration.equals("1 day")) {
+                Toast.makeText(this, "launch crawler", Toast.LENGTH_SHORT).show();
+                scheduleService();
+            }
         }
 
         // 6. Flickrガチャ用サービスの起動
-        scheduleFlickrGachaService();
+        // scheduleFlickrGachaService();
 
     }
 

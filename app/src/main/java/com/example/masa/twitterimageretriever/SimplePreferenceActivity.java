@@ -15,7 +15,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
     private static final String PREF_NAME = "setting";
 
     private static final String TWITTER_ACCOUNT_NAME = "twitter_account_name";
-    private static final String SET_CRAWLER_DURATION = "set_crawler_duration";
+    private static final String CRAWLER_DURATION = "crawler_duration";
     private static final String GACHA_DURATION = "gacha_duration";
 
 
@@ -27,8 +27,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
     EditText et;
     RadioGroup rg1;
     RadioGroup rg2;
-    //RadioButton rb;
-    //RadioButton rb2;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,9 +42,66 @@ public class SimplePreferenceActivity extends AppCompatActivity {
         et   = (EditText) findViewById(R.id.editText);
         rg1  = (RadioGroup) findViewById(R.id.RG1);
         rg2  = (RadioGroup) findViewById(R.id.RG2);
-        //rb = (RadioButton) findViewById(rg1.getCheckedRadioButtonId());
-        //rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
 
+
+        // 2回目以降、設定したTwitterアカウントを自動再ロード
+        String twitterName = preferences.getString(TWITTER_ACCOUNT_NAME, "No Data");
+        if (twitterName != "No Data") {
+            et.setText(twitterName);
+        }
+
+        // 2回目以降、設定した自動クローラ周期を自動再ロード
+        String set_crawler_duration = preferences.getString(CRAWLER_DURATION, "No Data");
+        if (set_crawler_duration != "No Data") {
+
+            RadioButton rb = null;
+
+            switch (set_crawler_duration) {
+                case "1 hour":
+                    rb = (RadioButton) findViewById(R.id.radioButton2);
+                    break;
+                case "1 day":
+                    rb = (RadioButton) findViewById(R.id.radioButton3);
+                    break;
+                case "OFF":
+                    rb = (RadioButton) findViewById(R.id.OFFradioButton);
+                    break;
+                default:
+                    System.out.println("なんでもない");
+            }
+
+            rb.setChecked(true);
+
+        } else {
+            System.out.println("おわた");
+        }
+
+        // 2回目以降、設定した自動ガチャ周期を自動再ロード
+        String set_gacha_duration = preferences.getString(GACHA_DURATION, "No Data");
+
+        if (set_gacha_duration != "No Data") {
+
+            RadioButton rb2 = null;
+
+            switch (set_gacha_duration) {
+                case "ON":
+                    rb2 = (RadioButton) findViewById(R.id.radioButton4);
+                    break;
+                case "OFF":
+                    rb2 = (RadioButton) findViewById(R.id.radioButton5);
+                    break;
+                default:
+                    System.out.println("なんでもない");
+            }
+
+            rb2.setChecked(true);
+
+        } else {
+            System.out.println("おわた");
+        }
+
+
+        // set event listener
 
         findViewById(R.id.OKButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,8 +117,8 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 RadioButton rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
 
                 editor.putString(TWITTER_ACCOUNT_NAME, String.valueOf(et.getText()));
-                editor.putString(DURATION, String.valueOf(rb.getText()));
-                editor.putString(DURATION, String.valueOf(rb2.getText()));
+                editor.putString(CRAWLER_DURATION, String.valueOf(rb.getText()));
+                editor.putString(GACHA_DURATION, String.valueOf(rb2.getText()));
 
                 System.out.println("ツイ垢: " + et.getText() +
                                    ", クローラ周期: " + rb.getText() +
@@ -83,44 +139,6 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-        // 2回目以降、設定したTwitterアカウントを自動再ロード
-        String twitterName = preferences.getString(TWITTER_ACCOUNT_NAME, "No Data");
-        if (twitterName != "No Data") {
-            et.setText(twitterName);
-        }
-
-
-        String set_crawler_duration = preferences.getString(SET_CRAWLER_DURATION, "No Data");
-        if (set_crawler_duration != "No Data") {
-
-            RadioButton rb = (RadioButton) findViewById(rg1.getCheckedRadioButtonId());
-            RadioButton rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
-
-
-//            switch (set_crawler_duration) {
-//                case "1 hour":
-                    rb.setChecked(true);
-//                case "1 day":
-                    //rb.setChecked(true);
-//                case "OFF":
-//                    rb.setChecked(true);
-//            }
-        }
-
-
-
-
-
-//        rget.setText(twitterName);
-
-        String set_gacha_duration = preferences.getString(GACHA_DURATION, "No Data");
-        if (set_gacha_duration == "No Data") {
-            return;
-        }
-//        et.setText(twitterName);
-
 
     }
 }
