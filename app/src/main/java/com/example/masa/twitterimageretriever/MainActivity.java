@@ -35,7 +35,6 @@ import android.widget.ListView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
@@ -300,13 +299,23 @@ public class MainActivity extends AppCompatActivity {
     // BaseAdapter を継承した GridAdapter クラスのインスタンス生成
     class GridAdapter extends BaseAdapter implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
+
         class ViewHolder {
             ImageView imageView;
         }
 
+
         private LayoutInflater inflater;
         private int layoutId;
-        // private List<String> icList = new ArrayList<String>();
+        private ArrayList<String> o_o_img_str;
+
+
+        public GridAdapter(Context context, int layoutId, ArrayList<String> o_o) {
+            super();
+            this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.layoutId = layoutId;
+            this.o_o_img_str = o_o;
+        }
 
 
         @Override
@@ -316,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
                 //oreoreImageURLs.add("http://www.google.ca/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwiPpur2gonSAhVmhlQKHfCJAOoQjBwIBA&url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FKmDMc0KZe38%2Fmaxresdefault.jpg&psig=AFQjCNGdQuTzJp3lBRbLgSqBOdxLFioO8Q&ust=1486936128504967");
                 //oreoreImageURLs.add("http://blog-img.esuteru.com/image/article/201609/075b245397099c622fc25d6724ffd946.jpg");
                 //notifyDataSetChanged();  // gridViewだからか？ これがないとだめっぽい
-            } else {
             }
         }
 
@@ -337,13 +345,14 @@ public class MainActivity extends AppCompatActivity {
                 new MyAsyncTask(MainActivity.this, twitter).execute();
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
 
-                return;
+                return; // リロードボタンが押されたら早期リターン
             }
 
 
             LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).resize(1250,1250).centerCrop().into(imageView);
+
 
             imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
@@ -354,7 +363,6 @@ public class MainActivity extends AppCompatActivity {
                     Bitmap mBitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
                     DeviceUtils.saveToFile(MainActivity.this, mBitmap);
-
 //                    try {
 //                        // sdcardフォルダを指定
 //                        File root = Environment.getExternalStorageDirectory();
@@ -395,13 +403,6 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
         }
 
-
-        public GridAdapter(Context context, int layoutId, List<String> iconList) {
-            super();
-            this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            this.layoutId = layoutId;
-            // icList = iconList;
-        }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -463,7 +464,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-
         // 以下、時系列順
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -490,8 +490,6 @@ public class MainActivity extends AppCompatActivity {
 //            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
 
             findViewById(R.id.image_view).setBackgroundColor(Color.RED);
-
-
         }
 
         @Override
