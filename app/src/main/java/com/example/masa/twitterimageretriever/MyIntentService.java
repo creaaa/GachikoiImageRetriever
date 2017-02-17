@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
+import twitter4j.MediaEntity;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -119,7 +121,7 @@ public class MyIntentService extends IntentService {
 //
 //            result = this.twitter.search(query);
 //
-//            ArrayList<String> imageURLs = new ArrayList<>();
+            ArrayList<String> imageURLs = new ArrayList<>();
 //
 //            // 最新のつぶやきのIDを取得
 //            long latestID = result.getTweets().get(0).getId();
@@ -149,15 +151,13 @@ public class MyIntentService extends IntentService {
 //                }
 //            }
 
-
             TimelinesResources timeline = twitter.timelines();
 
             Paging paging = new Paging();    // Pagingオブジェクトを作成
             paging.setPage(1);               // ページ番号を指定
-            paging.count(5);               // 1ページから取得するツイート数を指定
-//    		paging.setMaxId(ツイートのID);     // MaxIdよりも後のツイートを取得するよう指定
+            paging.count(200);               // 1ページから取得するツイート数を指定
+    		// paging.setMaxId(latest_tweet_id + 1);     // MaxIdよりも後のツイートを取得するよう指定
             paging.setSinceId(latest_tweet_id);  // SinceIdよりも前のツイートを取得するよう指定
-
 
             // User user = twitter.showUser("@crea_mcz");
             User user = twitter.showUser(ta);
@@ -165,9 +165,61 @@ public class MyIntentService extends IntentService {
 
             ResponseList tweets = timeline.getUserTimeline(id, paging);
 
-            for (int i = 0; i < tweets.size(); i++) {
-                Status tweet = (Status) tweets.get(i);
-                System.out.println("ツイート："  + tweet.getText());
+            // 前回のクロール以降、つぶやきが1個でもあれば
+            if (tweets.size() > 0) {
+
+                // 処理1: 前回以降の画像つきツイートから画像を抽出し、ローカル保存
+                for (int i = 0; i < tweets.size(); i++) {
+
+                    Status tweet = (Status) tweets.get(i);
+
+                    MediaEntity[] mentitys = tweet.getMediaEntities();
+
+                    for (MediaEntity m : mentitys) {
+                        imageURLs.add(m.getMediaURL());
+                    }
+
+                    if (imageURLs != null) {
+
+                        // これ　消すなよ
+                        // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
+//                    int count = imageURLs.size();
+//                    int randomIdx = new Random().nextInt(count);
+//
+//                    mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
+//                    System.out.println(mBitmap + "だぜ");
+//
+//                    if (mBitmap != null) {
+//                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+//                        System.out.println("保存してやったり！");
+//                    } else {
+//                        System.out.println("そもそも画像 なかったアルよ");
+//                    }
+
+                        for (String URL : imageURLs) {
+                            mBitmap = getBitmapFromURL(URL);
+                            DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+                            System.out.println("保存してやったり！");
+                        }
+
+                    } else {
+                        System.out.println("ImageURLは 1個も なかったアルね");
+                    }
+                }
+
+                // 処理2: 最新のつぶやきIDをpreferenceに保存
+                if (tweets.size() > 0) {
+                    Status tmp = (Status) tweets.get(0);
+                    long l_t_id = tmp.getId();
+                    System.out.println("最新のつぶやきIDは " + l_t_id);
+
+                    editor.putLong(LATEST_TWEET_ID, l_t_id);
+                    boolean saveResult = editor.commit();
+                    System.out.println("保存結果: " + saveResult);
+                }
+
+            } else {
+                System.out.println("新着つぶやきは ありませんでした");
             }
 
         } catch (TwitterException e) {
