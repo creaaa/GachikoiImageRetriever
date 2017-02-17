@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
 
-            System.out.println("positionの位置だ？それは " + position + "だ！");
+            System.out.println("ここはonItemClick。positionの位置だ？それは " + position + "だ！");
             System.out.println("画像の個数だ？それは " + parent.getCount() + "だ！");
 
             if (position + 1 == parent.getCount()) {
@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
             // ※ これは当然動きます
             //holder.imageView.setImageResource(icList.get(position));
 
-            System.out.println("positionの位置だ？それは " + position + "だ！");
+            System.out.println("ここはgetView。positionの位置だ？それは " + position + "だ！");
 
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).into(holder.imageView);
 
@@ -487,7 +487,10 @@ public class MainActivity extends AppCompatActivity {
             // アクションモード時のアイテムの選択状態変更時
             System.out.println("きた5");
 
-            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+//            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+
+            findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+
 
         }
 
