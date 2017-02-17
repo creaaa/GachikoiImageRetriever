@@ -121,35 +121,35 @@ public class MyIntentService extends IntentService {
 //
 //            result = this.twitter.search(query);
 //
-            ArrayList<String> imageURLs = new ArrayList<>();
-//
-//            // 最新のつぶやきのIDを取得
-//            long latestID = result.getTweets().get(0).getId();
-//            editor.putLong(LATEST_ID, latestID);
-//            editor.commit();
-//
-//            for (twitter4j.Status tweet : result.getTweets()) {
-//                MediaEntity[] mentitys = tweet.getMediaEntities();
-//                for (MediaEntity m : mentitys) {
-//                    imageURLs.add(m.getMediaURL());
-//                }
-//            }
-//
-//            if (imageURLs != null) {
-//
-//                int count = imageURLs.size();
-//                int randomIdx = new Random().nextInt(count);
-//
-//                mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
-//                System.out.println(mBitmap + "だぜ");
-//
-//                if (mBitmap != null) {
-//                    DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-//                    System.out.println("保存してやったり！");
-//                } else {
-//                    System.out.println("そもそも画像 なかったアルよ");
-//                }
-//            }
+//            ArrayList<String> imageURLs = new ArrayList<>();
+////
+////            // 最新のつぶやきのIDを取得
+////            long latestID = result.getTweets().get(0).getId();
+////            editor.putLong(LATEST_ID, latestID);
+////            editor.commit();
+////
+////            for (twitter4j.Status tweet : result.getTweets()) {
+////                MediaEntity[] mentitys = tweet.getMediaEntities();
+////                for (MediaEntity m : mentitys) {
+////                    imageURLs.add(m.getMediaURL());
+////                }
+////            }
+////
+////            if (imageURLs != null) {
+////
+////                int count = imageURLs.size();
+////                int randomIdx = new Random().nextInt(count);
+////
+////                mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
+////                System.out.println(mBitmap + "だぜ");
+////
+////                if (mBitmap != null) {
+////                    DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+////                    System.out.println("保存してやったり！");
+////                } else {
+////                    System.out.println("そもそも画像 なかったアルよ");
+////                }
+////            }
 
             TimelinesResources timeline = twitter.timelines();
 
@@ -168,10 +168,14 @@ public class MyIntentService extends IntentService {
             // 前回のクロール以降、つぶやきが1個でもあれば
             if (tweets.size() > 0) {
 
+                ArrayList<String> imageURLs = new ArrayList<>();
+
                 // 処理1: 前回以降の画像つきツイートから画像を抽出し、ローカル保存
                 for (int i = 0; i < tweets.size(); i++) {
 
                     Status tweet = (Status) tweets.get(i);
+                    System.out.println("ID: " + tweet.getId());
+
 
                     MediaEntity[] mentitys = tweet.getMediaEntities();
 
@@ -179,10 +183,36 @@ public class MyIntentService extends IntentService {
                         imageURLs.add(m.getMediaURL());
                     }
 
-                    if (imageURLs != null) {
+//                    if (imageURLs != null) {
+//
+//                        // これ　消すなよ
+//                        // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
+////                    int count = imageURLs.size();
+////                    int randomIdx = new Random().nextInt(count);
+////
+////                    mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
+////                    System.out.println(mBitmap + "だぜ");
+////
+////                    if (mBitmap != null) {
+////                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+////                        System.out.println("保存してやったり！");
+////                    } else {
+////                        System.out.println("そもそも画像 なかったアルよ");
+////                    }
+//
+//                        for (String URL : imageURLs) {
+//                            mBitmap = getBitmapFromURL(URL);
+//                            DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+//                            System.out.println("保存してやったり！");
+//                        }
+//                    }
+                }
 
-                        // これ　消すなよ
-                        // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
+
+                if (imageURLs != null) {
+
+                    // これ　消すなよ
+                    // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
 //                    int count = imageURLs.size();
 //                    int randomIdx = new Random().nextInt(count);
 //
@@ -196,19 +226,18 @@ public class MyIntentService extends IntentService {
 //                        System.out.println("そもそも画像 なかったアルよ");
 //                    }
 
-                        for (String URL : imageURLs) {
-                            mBitmap = getBitmapFromURL(URL);
-                            DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-                            System.out.println("保存してやったり！");
-                        }
-
-                    } else {
-                        System.out.println("ImageURLは 1個も なかったアルね");
+                    for (String URL : imageURLs) {
+                        mBitmap = getBitmapFromURL(URL);
+                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
+                        System.out.println("保存してやったり！");
                     }
+
+                } else {
+                    System.out.println("ImageURLは 1個も なかったアルね");
                 }
 
                 // 処理2: 最新のつぶやきIDをpreferenceに保存
-                if (tweets.size() > 0) {
+//                if (tweets.size() > 0) {
                     Status tmp = (Status) tweets.get(0);
                     long l_t_id = tmp.getId();
                     System.out.println("最新のつぶやきIDは " + l_t_id);
@@ -216,7 +245,7 @@ public class MyIntentService extends IntentService {
                     editor.putLong(LATEST_TWEET_ID, l_t_id);
                     boolean saveResult = editor.commit();
                     System.out.println("保存結果: " + saveResult);
-                }
+//                }
 
             } else {
                 System.out.println("新着つぶやきは ありませんでした");

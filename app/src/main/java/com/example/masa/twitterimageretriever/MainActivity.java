@@ -146,12 +146,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-
-        new MyAsyncTask(MainActivity.this, twitter).execute();
-        System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
-        //
         super.onStop();
     }
+
 
     /* for Service */
 
