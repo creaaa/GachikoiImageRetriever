@@ -25,6 +25,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pref);
         //
@@ -46,10 +47,17 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 RadioGroup rg = (RadioGroup) findViewById(R.id.RadioGroup);
                 RadioButton rb = (RadioButton) findViewById(rg.getCheckedRadioButtonId());
 
+                RadioGroup rg2 = (RadioGroup) findViewById(R.id.RadioGroup2);
+                RadioButton rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
+
                 editor.putString(TWITTER_ACCOUNT_NAME, String.valueOf(et.getText()));
                 editor.putString(DURATION, String.valueOf(rb.getText()));
+                editor.putString(DURATION, String.valueOf(rb2.getText()));
 
-                System.out.println("ツイ垢: " + et.getText() + ", 期間: " + rb.getText());
+                System.out.println("ツイ垢: " + et.getText() +
+                                   ", クローラ周期: " + rb.getText() +
+                                   ", ガチャ周期: "  + rb2.getText()
+                );
 
                 editor.commit();
 
@@ -65,6 +73,8 @@ public class SimplePreferenceActivity extends AppCompatActivity {
             }
         });
 
+
+        // 2回目以降、設定したTwitterアカウントを自動再ロード
         String twitterName = preferences.getString(TWITTER_ACCOUNT_NAME, "No Data");
 
         if (twitterName == "No Data") {
