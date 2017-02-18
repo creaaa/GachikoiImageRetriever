@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -334,6 +333,11 @@ public class MainActivity extends AppCompatActivity {
 
         searchView.setOnQueryTextListener(onQueryTextListener);
 
+
+
+
+
+
         return true;
     }
 
@@ -509,46 +513,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private class Callback implements GridView.MultiChoiceModeListener {
-
-        // これだけいつ呼ばれるか不明
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            // アクションアイテム選択時
-            System.out.println("きた1");
-            return true;
-        }
-
-        // 以下、時系列順
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // アクションモード初期化処理
-            System.out.println("きた2");
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            // アクションモード表示事前処理
-            System.out.println("きた4");
-
-            return true;
-        }
-
-        @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position,
-                                              long id, boolean checked) {
-            // アクションモード時のアイテムの選択状態変更時
-            System.out.println("きた5");
-
-//            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
-//            gridview.findViewById(R.id.image_view).setBackgroundColor(Color.BLUE);
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            System.out.println("きた3");
-        }
-    }
+//    private class Callback implements GridView.MultiChoiceModeListener {
+//
+//        // これだけいつ呼ばれるか不明
+//        @Override
+//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+//            // アクションアイテム選択時
+//            System.out.println("きた1");
+//            return true;
+//        }
+//
+//        // 以下、時系列順
+//        @Override
+//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+//            // アクションモード初期化処理
+//            System.out.println("きた2");
+//
+//            return true;
+//        }
+//
+//        @Override
+//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+//            // アクションモード表示事前処理
+//            System.out.println("きた4");
+//
+//            return true;
+//        }
+//
+//        @Override
+//        public void onItemCheckedStateChanged(ActionMode mode, int position,
+//                                              long id, boolean checked) {
+//            // アクションモード時のアイテムの選択状態変更時
+//            System.out.println("きた5");
+//
+////            MainActivity.this.findViewById(R.id.image_view).setBackgroundColor(Color.RED);
+////            gridview.findViewById(R.id.image_view).setBackgroundColor(Color.BLUE);
+//        }
+//
+//        @Override
+//        public void onDestroyActionMode(ActionMode mode) {
+//            System.out.println("きた3");
+//        }
+//    }
 }
