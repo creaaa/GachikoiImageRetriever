@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> oreoreImageURLs = new ArrayList<String>();
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
