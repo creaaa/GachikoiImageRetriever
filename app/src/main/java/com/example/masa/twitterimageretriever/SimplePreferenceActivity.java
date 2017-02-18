@@ -27,7 +27,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
     RadioGroup rg2;
 
     // 再設定時、もし別のtwitterNameが入力されたら、最新つぶやきIDをリセットする。そのために使う
-    String previousTwitterName;
+    String previousTwitterName = "";
 
 
     @Override
@@ -40,9 +40,6 @@ public class SimplePreferenceActivity extends AppCompatActivity {
         Context.MODE_PRIVATE);
         editor = preferences.edit();
         //
-
-
-
         et   = (EditText) findViewById(R.id.editText);
         rg1  = (RadioGroup) findViewById(R.id.RG1);
         rg2  = (RadioGroup) findViewById(R.id.RG2);

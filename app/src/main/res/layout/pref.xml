@@ -61,7 +61,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Name"
         android:ems="10"
         android:id="@+id/editText"
         android:layout_below="@+id/textView3"
@@ -112,7 +111,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/OFFradioButton"
             android:layout_weight="1"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:checked="true" />
 
     </RadioGroup>
     </RelativeLayout>
@@ -153,7 +153,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/radioButton5"
             android:layout_weight="1"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:checked="true" />
     </RadioGroup>
 
     <Button

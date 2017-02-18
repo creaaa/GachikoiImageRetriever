@@ -131,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
         // 5. サービスの起動
         if (TwitterUtils.hasAccessToken(this)) {
 
-            String crawler_duration = pref.getString("crawler_duration", "");
-            //System.out.println("クローラ期間: " + crawler_duration);
+            String crawler_duration = pref.getString("crawler_duration", "OFF");
+            System.out.println("クローラ期間: " + crawler_duration);
 
 
             if (crawler_duration.equals("1 hour") || crawler_duration.equals("1 day")) {
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 6. Flickrガチャ用サービスの起動
-        String gacha_duration = pref.getString("gacha_duration", "ON");
+        String gacha_duration = pref.getString("gacha_duration", "OFF");
         System.out.println("ガチャ期間: " + gacha_duration);
 
         if (gacha_duration.equals("ON")) {
