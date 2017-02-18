@@ -30,7 +30,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -108,9 +107,11 @@ public class MainActivity extends AppCompatActivity {
         gridview.setAdapter(adapter);
 
         gridview.setOnItemClickListener(adapter);
-        gridview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        gridview.setMultiChoiceModeListener(new Callback());
-        gridview.setOnScrollListener(adapter);
+
+        // 複数選択モード うまくいかず あきらめました 行ける自信があればこの3行復活させて
+        // gridview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        // gridview.setMultiChoiceModeListener(new Callback());
+        // gridview.setOnScrollListener(adapter);
 
         // 空のときのビュー
         gridview.setEmptyView(button);
@@ -131,17 +132,29 @@ public class MainActivity extends AppCompatActivity {
         if (TwitterUtils.hasAccessToken(this)) {
 
             String crawler_duration = pref.getString("crawler_duration", "");
-            System.out.println("クローラ期間: " + crawler_duration);
+            //System.out.println("クローラ期間: " + crawler_duration);
+
 
             if (crawler_duration.equals("1 hour") || crawler_duration.equals("1 day")) {
+
+                if (pref.getString("crawler_duration", "").equals("")) {
+                    System.out.println("twitter account hasn't set");
+                    return;
+                }
+
                 Toast.makeText(this, "launch crawler", Toast.LENGTH_SHORT).show();
                 scheduleService();
             }
         }
 
         // 6. Flickrガチャ用サービスの起動
-        // scheduleFlickrGachaService();
+        String gacha_duration = pref.getString("gacha_duration", "ON");
+        System.out.println("ガチャ期間: " + gacha_duration);
 
+        if (gacha_duration.equals("ON")) {
+            Toast.makeText(this, "launch Gacha", Toast.LENGTH_SHORT).show();
+            scheduleFlickrGachaService();
+        }
     }
 
 
@@ -155,11 +168,6 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(pref.getString(TWITTER_ACCOUNT_NAME, "NaN"));
 
         }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
     }
 
 
@@ -179,7 +187,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(context, MyIntentService.class);
 
         if (pref != null) {
-            String twitter_account = pref != null ? pref.getString(TWITTER_ACCOUNT_NAME, "NaN") : "NaN";
+            String twitter_account =
+                    pref != null ? pref.getString(TWITTER_ACCOUNT_NAME, "NaN") : "NaN";
             intent.putExtra("ta", twitter_account);
         }
 
@@ -202,9 +211,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
-
     }
-
 
 
     /* Callback */

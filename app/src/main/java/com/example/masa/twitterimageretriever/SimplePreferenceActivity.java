@@ -19,14 +19,15 @@ public class SimplePreferenceActivity extends AppCompatActivity {
     private static final String GACHA_DURATION = "gacha_duration";
 
 
-    private static final String DURATION = "duration";
-
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
 
     EditText et;
     RadioGroup rg1;
     RadioGroup rg2;
+
+    // 再設定時、もし別のtwitterNameが入力されたら、最新つぶやきIDをリセットする。そのために使う
+    String previousTwitterName;
 
 
     @Override
@@ -38,6 +39,9 @@ public class SimplePreferenceActivity extends AppCompatActivity {
         preferences = SimplePreferenceActivity.this.getSharedPreferences(PREF_NAME,
         Context.MODE_PRIVATE);
         editor = preferences.edit();
+        //
+
+
 
         et   = (EditText) findViewById(R.id.editText);
         rg1  = (RadioGroup) findViewById(R.id.RG1);
@@ -48,6 +52,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
         String twitterName = preferences.getString(TWITTER_ACCOUNT_NAME, "No Data");
         if (twitterName != "No Data") {
             et.setText(twitterName);
+            previousTwitterName = twitterName;
         }
 
         // 2回目以降、設定した自動クローラ周期を自動再ロード
@@ -57,6 +62,7 @@ public class SimplePreferenceActivity extends AppCompatActivity {
             RadioButton rb = null;
 
             switch (set_crawler_duration) {
+
                 case "1 hour":
                     rb = (RadioButton) findViewById(R.id.radioButton2);
                     break;
@@ -100,12 +106,12 @@ public class SimplePreferenceActivity extends AppCompatActivity {
             System.out.println("おわた");
         }
 
-
         // set event listener
 
         findViewById(R.id.OKButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 System.out.println("OK touched");
                 //
                 preferences = SimplePreferenceActivity.this.getSharedPreferences(PREF_NAME,
@@ -117,6 +123,13 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 RadioButton rb2 = (RadioButton) findViewById(rg2.getCheckedRadioButtonId());
 
                 editor.putString(TWITTER_ACCOUNT_NAME, String.valueOf(et.getText()));
+
+                if (!previousTwitterName.equals(String.valueOf(et.getText()))) {
+                    System.out.println("違う twitterNameが 入力されました");
+                    editor.putLong("latest_tweet_id", 1);
+                }
+
+
                 editor.putString(CRAWLER_DURATION, String.valueOf(rb.getText()));
                 editor.putString(GACHA_DURATION, String.valueOf(rb2.getText()));
 
@@ -126,11 +139,9 @@ public class SimplePreferenceActivity extends AppCompatActivity {
                 );
 
                 editor.commit();
-
                 finish();
             }
         });
-
 
         findViewById(R.id.DismissButton).setOnClickListener(new View.OnClickListener() {
             @Override
