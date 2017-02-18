@@ -16,7 +16,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
-public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
+public class MyAsyncTask extends AsyncTask<String, String, List<Status>> {
 
     private MainActivity activity;
     private Twitter twitter;
@@ -74,22 +74,25 @@ public class MyAsyncTask extends AsyncTask<Void, String, List<Status>> {
 
 
     @Override
-    protected List<twitter4j.Status> doInBackground(Void... params) {
+    protected List<twitter4j.Status> doInBackground(String... params) {
 
         System.out.println("Do!! Do!! Do!!");
-        return searchTwitterByQuery();
+        return searchTwitterByQuery(params[0]);
     }
 
 
-    public List<twitter4j.Status> searchTwitterByQuery() {
+    public List<twitter4j.Status> searchTwitterByQuery(String oshi) {
 
         // 検索の実行
         QueryResult result = null;
-
+        // 推しの名前(クエリになる)
+        String oshi_query = oshi;
 
         try {
             // 検索文字列を設定する
-            Query query = new Query("ゆっふぃー -rt");
+            Query query = new Query(oshi_query + " -rt");
+
+
 //            query.setLocale("ja");	// 日本語のtweetに限定する
             query.setCount(100);  // 最大20tweetにする（デフォルトは15）
 

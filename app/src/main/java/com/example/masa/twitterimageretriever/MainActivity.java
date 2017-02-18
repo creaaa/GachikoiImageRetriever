@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> oreoreImageURLs = new ArrayList<String>();
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 if (MainActivity.this.button.getVisibility() == View.VISIBLE) {
                     button.setVisibility(View.GONE);
                 }
-                new MyAsyncTask(MainActivity.this, twitter).execute();
+                new MyAsyncTask(MainActivity.this, twitter).execute(pref.getString("oshi_name", "NaN"));
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
             }
         });
@@ -155,6 +157,13 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "launch Gacha", Toast.LENGTH_SHORT).show();
             scheduleFlickrGachaService();
         }
+
+        // 7. 推しはハッキリアクティビティへの遷移
+        if (pref.getString("oshi_name", "NaN").equals("NaN")) {
+            Intent i = new Intent(this, DecideOshiActivity.class);
+            startActivity(i);
+        }
+
     }
 
 
@@ -163,13 +172,13 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         //
         System.out.println("onRestart 来ましたね");
+        System.out.println(pref.getString("oshi_name", "失敗..."));
 
         if (pref != null) {
             System.out.println(pref.getString(TWITTER_ACCOUNT_NAME, "NaN"));
 
         }
     }
-
 
     /* for Service */
 
@@ -296,13 +305,13 @@ public class MainActivity extends AppCompatActivity {
             //return true;
         }
 
-
         @Override
         public boolean onQueryTextChange(String newText) {
             // 入力される度に呼び出される
             System.out.println("input");
             return false;
         }
+
     };
 
 
@@ -331,11 +340,6 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //
 //        searchView.setOnQueryTextListener(onQueryTextListener);
-
-
-
-
-
 
         return true;
     }
@@ -400,7 +404,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("お前の正体は、リロードボタンだ！");
 
                 // ここに再ロード処理を書く
-                new MyAsyncTask(MainActivity.this, twitter).execute();
+                new MyAsyncTask(MainActivity.this, twitter).execute(pref.getString("oshi_name", "NaN"));
                 System.out.println("まあ、これ先にくるよね。。main acticityのIDは 当然" + MainActivity.this.maxId + "ですぞ");
 
                 return; // リロードボタンが押されたら早期リターン
@@ -410,7 +414,6 @@ public class MainActivity extends AppCompatActivity {
             LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final ImageView imageView = (ImageView)inflater.inflate(R.layout.image, null);
             Picasso.with(getApplicationContext()).load(oreoreImageURLs.get(position)).resize(1250,1250).centerCrop().into(imageView);
-
 
             imageView.setOnLongClickListener(new View.OnLongClickListener() {
 

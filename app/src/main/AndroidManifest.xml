@@ -42,6 +42,7 @@
             <!--</intent-filter>-->
         </activity>
 
+        <activity android:name=".DecideOshiActivity"/>
         <activity android:name=".SimplePreferenceActivity"/>
 
         <service android:name=".MyIntentService" />
