@@ -19,6 +19,7 @@ public class DeviceUtils {
             return;
         }
 
+
         try {
 
             // 引数にファイルもしくはディレクトリ名を指定し、該当するFileオブジェクトを生成
