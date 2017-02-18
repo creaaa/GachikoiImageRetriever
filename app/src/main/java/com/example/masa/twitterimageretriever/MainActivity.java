@@ -128,12 +128,13 @@ public class MainActivity extends AppCompatActivity {
         this.twitter = new TwitterFactory(configurationBuilder.build()).getInstance();
 
 
+        String crawler_duration = pref.getString("crawler_duration", "OFF");
+
+
         // 5. サービスの起動
         if (TwitterUtils.hasAccessToken(this)) {
 
-            String crawler_duration = pref.getString("crawler_duration", "OFF");
             System.out.println("クローラ期間: " + crawler_duration);
-
 
             if (crawler_duration.equals("1 hour") || crawler_duration.equals("1 day")) {
 
@@ -143,9 +144,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(this, "launch crawler", Toast.LENGTH_SHORT).show();
-                scheduleService();
+                scheduleService(crawler_duration);
             }
         }
+
 
         // 6. Flickrガチャ用サービスの起動
         String gacha_duration = pref.getString("gacha_duration", "OFF");
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG2 = "FlickrGacha";
 
 
-    protected void  scheduleService() {
+    protected void  scheduleService(String s) {
 
         System.out.println("はいー scheduleService はじまりましたよー");
         Log.d(TAG, "scheduleService()");
@@ -192,17 +194,26 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("ta", twitter_account);
         }
 
+
         PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
 
 
+        System.out.println("クロール期間: " + s);
+
         int duration = 5000;
-//        pref.getLong()
 
+        switch (s) {
+            case "1 hour":
+                duration = 3600000;
+                break;
+            case "1 day":
+                duration = 86400000;
+                break;
+        }
 
-
-        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), duration, pendingIntent);
     }
 
 
