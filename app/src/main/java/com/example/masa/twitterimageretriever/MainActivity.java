@@ -13,7 +13,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -312,26 +311,26 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu, menu);
 
-        getMenuInflater().inflate(R.menu.search, menu);
-        MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
-        searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-
-        // 虫眼鏡アイコンを最初表示するかの設定
-        this.searchView.setIconifiedByDefault(true);
-        // Submitボタンを表示するかどうか
-        this.searchView.setSubmitButtonEnabled(false);
-
-
-        if (!searchWord.equals("")) {
-            // TextView.setTextみたいなもの
-            searchView.setQuery(searchWord, false);
-        } else {
-            String queryHint = getResources().getString(R.string.search_menu_query_hint_text);
-            // placeholderみたいなもの
-            searchView.setQueryHint(queryHint);
-        }
-
-        searchView.setOnQueryTextListener(onQueryTextListener);
+//        getMenuInflater().inflate(R.menu.search, menu);
+//        MenuItem menuItem = menu.findItem(R.id.search_menu_search_view);
+//        searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+//
+//        // 虫眼鏡アイコンを最初表示するかの設定
+//        this.searchView.setIconifiedByDefault(true);
+//        // Submitボタンを表示するかどうか
+//        this.searchView.setSubmitButtonEnabled(false);
+//
+//
+//        if (!searchWord.equals("")) {
+//            // TextView.setTextみたいなもの
+//            searchView.setQuery(searchWord, false);
+//        } else {
+//            String queryHint = getResources().getString(R.string.search_menu_query_hint_text);
+//            // placeholderみたいなもの
+//            searchView.setQueryHint(queryHint);
+//        }
+//
+//        searchView.setOnQueryTextListener(onQueryTextListener);
 
 
 

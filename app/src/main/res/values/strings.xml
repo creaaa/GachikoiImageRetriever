@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TwitterImageRetriever</string>
+    <string name="app_name">Gachikoi Image Retriever</string>
     <string name="search_menu_query_hint_text">Lady Gaga</string>
     <string name="path_image_storage">AutoCollect</string>
     <string name="extension_save_image">jpg</string>
