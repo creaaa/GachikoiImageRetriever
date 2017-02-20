@@ -137,6 +137,11 @@ public class MainActivity extends AppCompatActivity {
             if (crawler_duration.equals("1 hour") || crawler_duration.equals("1 day")) {
 
                 if (pref.getString("crawler_duration", "").equals("")) {
+                    // System.out.println("crawler is OFF");
+                    return;
+                }
+
+                if (pref.getString("twitter_account_name", "").equals("")) {
                     System.out.println("twitter account hasn't set");
                     return;
                 }
@@ -171,11 +176,6 @@ public class MainActivity extends AppCompatActivity {
         //
         System.out.println("onRestart 来ましたね");
         System.out.println(pref.getString("oshi_name", "失敗..."));
-
-        if (pref != null) {
-            System.out.println(pref.getString(TWITTER_ACCOUNT_NAME, "NaN"));
-
-        }
     }
 
     /* for Service */
@@ -186,20 +186,10 @@ public class MainActivity extends AppCompatActivity {
 
     protected void  scheduleService(String s) {
 
-        System.out.println("はいー scheduleService はじまりましたよー");
         Log.d(TAG, "scheduleService()");
 
         Context context = getBaseContext();
-
         Intent intent = new Intent(context, MyIntentService.class);
-
-        if (pref != null) {
-            String twitter_account =
-                    pref != null ? pref.getString(TWITTER_ACCOUNT_NAME, "NaN") : "NaN";
-            intent.putExtra("ta", twitter_account);
-        }
-
-
         PendingIntent pendingIntent = PendingIntent.getService(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
@@ -229,11 +219,13 @@ public class MainActivity extends AppCompatActivity {
         Context context = getBaseContext();
 
         Intent intent = new Intent(context, FlickrGachaIntentService.class);
+        String oshi_name = pref.getString("oshi_name", "");
+        intent.putExtra("oshi_name", oshi_name);
 
         PendingIntent pendingIntent = PendingIntent.getService(context, 2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 30000, pendingIntent);
     }
 
 

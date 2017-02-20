@@ -104,53 +104,12 @@ public class MyIntentService extends IntentService {
         Log.d(TAG, "onHandleIntent");
 
         // Preferenceから抽出した、取得したいTwitterAccount名
-        String ta = intent.getStringExtra("ta");
+        //String ta = intent.getStringExtra("ta");
 
         // 検索の実行
         // QueryResult result = null;
 
         try {
-            // 検索文字列を設定する
-//
-//            String searchQuery = ta;
-//
-//            // Query query = new Query("ニンテンドースイッチ -rt");
-//            Query query = new Query(ta + " -rt");
-//            query.setCount(100);  // 最大20tweetにする（デフォルトは15)
-//            query.sinceId(latest_tweet_id);
-//
-//            result = this.twitter.search(query);
-//
-//            ArrayList<String> imageURLs = new ArrayList<>();
-////
-////            // 最新のつぶやきのIDを取得
-////            long latestID = result.getTweets().get(0).getId();
-////            editor.putLong(LATEST_ID, latestID);
-////            editor.commit();
-////
-////            for (twitter4j.Status tweet : result.getTweets()) {
-////                MediaEntity[] mentitys = tweet.getMediaEntities();
-////                for (MediaEntity m : mentitys) {
-////                    imageURLs.add(m.getMediaURL());
-////                }
-////            }
-////
-////            if (imageURLs != null) {
-////
-////                int count = imageURLs.size();
-////                int randomIdx = new Random().nextInt(count);
-////
-////                mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
-////                System.out.println(mBitmap + "だぜ");
-////
-////                if (mBitmap != null) {
-////                    DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-////                    System.out.println("保存してやったり！");
-////                } else {
-////                    System.out.println("そもそも画像 なかったアルよ");
-////                }
-////            }
-
             TimelinesResources timeline = twitter.timelines();
 
             Paging paging = new Paging();    // Pagingオブジェクトを作成
@@ -159,8 +118,9 @@ public class MyIntentService extends IntentService {
     		// paging.setMaxId(latest_tweet_id + 1);     // MaxIdよりも後のツイートを取得するよう指定
             paging.setSinceId(latest_tweet_id);  // SinceIdよりも前のツイートを取得するよう指定
 
-            // User user = twitter.showUser("@crea_mcz");
-            User user = twitter.showUser(ta);
+
+            String searchQuery = pref.getString("twitter_account_name", "");
+            User user = twitter.showUser(searchQuery);
             long id = user.getId();
 
             ResponseList tweets = timeline.getUserTimeline(id, paging);
@@ -176,36 +136,23 @@ public class MyIntentService extends IntentService {
                     Status tweet = (Status) tweets.get(i);
                     System.out.println("ID: " + tweet.getId());
 
+                    // 以下、パターン1と2で取得できる画像が違う。
+                    // 2のほうが多く取れたが、いずれの場合でも取れなかった画像もいっぱいある。
+                    // とりあえずパターン2でいきます。一体どうなっているんだ・・・
 
-                    MediaEntity[] mentitys = tweet.getMediaEntities();
+                    // パターン1
+                    //MediaEntity[] mentitys = tweet.getMediaEntities();
 
-                    for (MediaEntity m : mentitys) {
+//                    for (MediaEntity m: mentitys) {
+//                        imageURLs.add(m.getMediaURL());
+//                    }
+
+                    // パターン2
+                    MediaEntity[] mentitys = tweet.getExtendedMediaEntities();
+                    for (MediaEntity m: mentitys) {
                         imageURLs.add(m.getMediaURL());
                     }
 
-//                    if (imageURLs != null) {
-//
-//                        // これ　消すなよ
-//                        // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
-////                    int count = imageURLs.size();
-////                    int randomIdx = new Random().nextInt(count);
-////
-////                    mBitmap = getBitmapFromURL(imageURLs.get(randomIdx));
-////                    System.out.println(mBitmap + "だぜ");
-////
-////                    if (mBitmap != null) {
-////                        DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-////                        System.out.println("保存してやったり！");
-////                    } else {
-////                        System.out.println("そもそも画像 なかったアルよ");
-////                    }
-//
-//                        for (String URL : imageURLs) {
-//                            mBitmap = getBitmapFromURL(URL);
-//                            DeviceUtils.saveToFile(getApplicationContext(), mBitmap);
-//                            System.out.println("保存してやったり！");
-//                        }
-//                    }
                 }
 
 
