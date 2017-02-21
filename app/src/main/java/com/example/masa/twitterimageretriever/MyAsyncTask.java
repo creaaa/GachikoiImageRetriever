@@ -102,7 +102,7 @@ public class MyAsyncTask extends AsyncTask<String, String, List<Status>> {
             // 最大1500件（15ページ）なので15回ループ
 //            for (int i = 1; i <= 7; i++) {
 
-            for (int i = 1; i <= 1; i++) {
+            for (int i = 1; i <= 3; i++) {
 
                 query.setMaxId(activity.maxId);
 

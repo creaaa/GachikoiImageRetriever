@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -157,7 +158,6 @@ public class MyIntentService extends IntentService {
 
 
                 if (imageURLs != null) {
-
                     // これ　消すなよ
                     // これは「画像ガチャ」、要するにランダムに1枚を保存する処理です。退避。
 //                    int count = imageURLs.size();
@@ -172,11 +172,11 @@ public class MyIntentService extends IntentService {
 //                    } else {
 //                        System.out.println("そもそも画像 なかったアルよ");
 //                    }
-
                     for (String URL : imageURLs) {
                         mBitmap = getBitmapFromURL(URL);
                         DeviceUtils.saveToFile(getApplicationContext(), mBitmap, "AutoCollect");
                         System.out.println("保存してやったり！");
+                        Toast.makeText(getApplicationContext(), "fetched", Toast.LENGTH_SHORT);
                     }
 
                 } else {

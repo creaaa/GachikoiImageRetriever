@@ -91,11 +91,11 @@ public class TwitterOAuthActivity extends Activity {
             protected void onPostExecute(AccessToken accessToken) {
                 if (accessToken != null) {
                     // 認証成功！
-                    showToast("認証成功！");
+                    showToast("Auth succeeded");
                     successOAuth(accessToken);
                 } else {
                     // 認証失敗。。。
-                    showToast("認証失敗。。。");
+                    showToast("Auth failed...");
                 }
             }
         };

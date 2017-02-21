@@ -73,8 +73,8 @@ public class FlickrGachaIntentService extends IntentService {
 
         System.out.println("心に刻み給え、汝の推しの名前は" + oshi + "である");
 
-        //String text            = "&text=" + oshi;
-        String text            = "&text=" + "寺嶋由芙";
+        String text            = "&text=" + oshi;
+        //String text            = "&text=" + "寺嶋由芙";
 
         String min_upload_date = "";
 //        String min_upload_date = "&min_upload_date=2013-01-01 03:20:45";
@@ -116,9 +116,6 @@ public class FlickrGachaIntentService extends IntentService {
             s = s.substring(s.indexOf("{"), s.lastIndexOf("}") + 1);
 
             System.out.println("ストリーム: " + s);
-
-
-
 
 
             try {
