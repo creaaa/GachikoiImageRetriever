@@ -233,9 +233,15 @@ public class MainActivity extends AppCompatActivity {
 
     void rerenderGridView(ArrayList<String> imageURLs) {
 
-        oreoreImageURLs = null;
-        oreoreImageURLs = imageURLs;
+//        oreoreImageURLs = null;
+//        oreoreImageURLs = imageURLs;
 
+        for (String imageURL: imageURLs) {
+            oreoreImageURLs.add(imageURL);
+        }
+
+
+        // 再ロードボタンを最後の要素として表示
         oreoreImageURLs.add("http://cdn4.iconfinder.com/data/icons/basic-work-elements/154/download-load-file-512.png");
 
         // AsyncTaskからのカウントを受け取り表示する

@@ -121,6 +121,9 @@ public class MyIntentService extends IntentService {
 
 
             String searchQuery = pref.getString("twitter_account_name", "");
+
+            System.out.println("サーチクエリ: " + searchQuery);
+
             User user = twitter.showUser(searchQuery);
             long id = user.getId();
 

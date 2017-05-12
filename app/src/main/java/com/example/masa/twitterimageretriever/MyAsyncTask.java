@@ -40,6 +40,9 @@ public class MyAsyncTask extends AsyncTask<String, String, List<Status>> {
         System.out.println("Pre Async!!");
         //
         activity.findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        if (activity.oreoreImageURLs.size() > 0) {
+            activity.oreoreImageURLs.remove(activity.oreoreImageURLs.size() - 1);
+        }
     }
 
     @Override
@@ -102,7 +105,7 @@ public class MyAsyncTask extends AsyncTask<String, String, List<Status>> {
             // 最大1500件（15ページ）なので15回ループ
 //            for (int i = 1; i <= 7; i++) {
 
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 1; i++) {
 
                 query.setMaxId(activity.maxId);
 
